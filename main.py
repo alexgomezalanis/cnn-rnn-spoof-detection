@@ -44,7 +44,7 @@ parser.add_argument('--is-la', default=True, type=lambda x: (str(x).lower() in [
 parser.add_argument('--train', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to train the model')
 parser.add_argument('--eval', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
-                    help='Whether to eval the model)
+                    help='Whether to eval the model')
 parser.add_argument('--version', type=str, default='v3',
                     help='Version to save the model')
 parser.add_argument('--num-classes', type=int, default=7, metavar='N',
