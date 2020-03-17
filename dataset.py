@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from utils.get_stft import get_stft
 
 PA_CLASSES = {'-': 0, 'AA': 1, 'AB': 2, 'AC': 3, 'BA': 4, 'BB': 5, 'BC': 6, 'CA': 7, 'CB': 8, 'CC': 9}
-
+PA_CLASSES_TFM = {'-': 0, 'AA': 1, 'AB': 2, 'AC': 3, 'AD': 4, 'AE': 5, 'BA': 6, 'BB': 7, 'BC': 8, 'BD': 9,'CA': 10,'CB': 11,'CC': 12 }
 Fs = 16000 # Hz
 
 class CNN_RNN_Dataset(Dataset):
@@ -26,7 +26,8 @@ class CNN_RNN_Dataset(Dataset):
     Args:
         csv_file (string): Path to the csv file with annotations.
         root_dir (string): Directory with all the wav files.
-        n_
+        n_filts (): Number of filters considered in each frame
+        n_frames (): Number of consecutive frames of a context
         window length (float): Window length in seconds
         frame shift (float): Frame shift in seconds
     """
