@@ -12,7 +12,7 @@ from eval import eval
 from train import train
 
 # Training settings
-parser = argparse.ArgumentParser(description='CNN RNN ASVspoof 2019')
+parser = argparse.ArgumentParser(description='CNN RNN audio distortions')
 parser.add_argument('--batch-size', type=int, default=100, metavar='N',
                     help='input batch size for training (default: 100)')
 parser.add_argument('--epochs', type=int, default=2, metavar='N',
@@ -52,7 +52,8 @@ parser.add_argument('--num-classes', type=int, default=7, metavar='N',
 parser.add_argument('--load-epoch', type=int, default=-1,
                     help='Saved epoch to load and start training')
 
-if __name__ == '__main__':
+
+def main():
   args = parser.parse_args()
   print(args)
 
@@ -102,7 +103,8 @@ if __name__ == '__main__':
 
     model.eval()
 
-    eval_voxceleb(
+'''
+  eval_voxceleb(
       protocol='train_protocol.csv',
       args=args,
       model=model,
@@ -110,3 +112,8 @@ if __name__ == '__main__':
       softmax_location=softmax_location,
       device=device,
       mp=mp)
+
+'''
+
+if __name__ == '__main__':
+  main()
