@@ -64,10 +64,9 @@ def main():
   torch.manual_seed(args.seed)
 
   mp.set_start_method('spawn')
-  model = CNN_RNN(args.num_classes, device).to(device)
+  model = CNN_RNN(args.num_classes,args.num_frames,args.frame_shift,device).to(device)
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
-
   # Model and xvectors path
   rootPath = os.getcwd()
   dirSpoof = 'LA' if args.is_la else 'PA'
