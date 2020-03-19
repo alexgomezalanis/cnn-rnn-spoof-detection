@@ -30,11 +30,12 @@ class CNN_RNN_Dataset(Dataset):
         n_frames (): Number of consecutive frames of a context
         window length (float): Window length in seconds
         frame shift (float): Frame shift in seconds
+        dataset (string) [training, development, test]: training, development or test
     """
     if dataframe is not None:
       self.wavfiles_frame = dataframe
     else:
-      self.wavfiles_frame = pd.read_csv(csv_file, sep=' ')
+      self.wavfiles_frame = pd.read_csv(csv_file)
     self.root_dir = root_dir
     self.n_filts = n_filts
     self.n_frames = n_frames
@@ -73,7 +74,7 @@ class CNN_RNN_Dataset(Dataset):
       else:
         file_dir = 'genuine' if label == 'bonafide' else 'spoof'
       file_path = os.path.join(path_db, 'flac-files', self.dataset, file_dir, nameFile + '.flac')
-    else:
+    else: #if dataset == 'test'
       file_path = os.path.join(path_db, 'flac-files', self.dataset, 'ASVspoof2019_' + nameFile[:2] + '_eval_v1/flac', nameFile + '.flac')
 
     # STFT features
