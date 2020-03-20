@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 
-.database
+/database
+/protocols
