@@ -7,7 +7,10 @@ from torch.utils.data import Dataset, DataLoader
 from utils.get_stft import get_stft
 
 PA_CLASSES = {'-': 0, 'AA': 1, 'AB': 2, 'AC': 3, 'BA': 4, 'BB': 5, 'BC': 6, 'CA': 7, 'CB': 8, 'CC': 9}
-PA_CLASSES_TFM = {'-': 0, 'AA': 1, 'AB': 2, 'AC': 3, 'AD': 4, 'AE': 5, 'BA': 6, 'BB': 7, 'BC': 8, 'BD': 9,'CA': 10,'CB': 11,'CC': 12 }
+PA_CLASSES_TFM = {'limpio': 0,
+ 'clipping_5_10_percent': 1, 'clipping_07_5_percent': 2, 'clipping_10_20_percent': 3, 'clipping_20_40_percent': 4, 'clipping_40_70_percent': 5,
+ 'reverberacion_Lowhight': 6, 'reverberacion_MediumLow': 7, 'reverberacion_MediumHight': 8, 'reverberacion_Hight': 9,
+ 'noise_0_5db_SNR': 10,'noise_5_10db_SNR': 11,'noise_10_20db_SNR': 12 }
 Fs = 16000 # Hz
 
 class CNN_RNN_Dataset(Dataset):
