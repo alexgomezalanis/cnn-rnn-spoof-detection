@@ -15,9 +15,13 @@ rootPath = os.getcwd()
 def train(args, model, start_epoch, accuracy, criterion, optimizer, device, model_location):
   criterion_dev = nn.CrossEntropyLoss(reduction='sum')
 
-  train_protocol = 'train_la.csv' if args.is_la else 'train_pa.csv'
-  dev_protocol = 'dev_la.csv' if args.is_la else 'dev_pa.csv'
-  root_dir = '/home2/alexgomezalanis'
+  # train_protocol = 'train_la.csv' if args.is_la else 'train_pa.csv'
+  # dev_protocol = 'dev_la.csv' if args.is_la else 'dev_pa.csv'
+  # root_dir = '/home2/alexgomezalanis'
+
+  train_protocol = 'ConjuntoDatosEntrenamiento.csv'
+  dev_protocol = 'ConjuntoDatosValidacion.csv'
+  root_dir = './database'
 
   train_dataset = CNN_RNN_Dataset(
     csv_file='./protocols/' + train_protocol,

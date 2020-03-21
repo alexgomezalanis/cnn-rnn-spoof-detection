@@ -25,6 +25,8 @@ class CNN_RNN_Dataset(Dataset):
     is_evaluating_la,
     num_classes,
     dataframe=None):
+
+    print(dataset)
     """
     Args:
         csv_file (string): Path to the csv file with annotations.
@@ -53,32 +55,49 @@ class CNN_RNN_Dataset(Dataset):
     return len(self.wavfiles_frame)
 
   def __getitem__(self, idx):
+    ## hay que leer el audio (wav) y hacerle la STFT:
+      ## 1º sacar el label y nameWav asociado a un idx del .csv
+        ##1.1 Conseguir el target asociado a la label
+      ## 2º leer el archivo del directorio correspondiente
+      ## 3º hacerle la STFT
+    #Se devuelve STFT,TARGET y nombre del fichero
     label = self.wavfiles_frame['label'][idx]
     nameFile = self.wavfiles_frame['wav'][idx]
-    
-    if self.is_evaluating_la:
-      if label == 'bonafide':
-        label = 'A00'
-      else:
-        label = self.wavfiles_frame['target'][idx]
-      label = label[1:]
-      target = int(label)
-    else:
-      if self.num_classes == 10:
-        target = PA_CLASSES[self.wavfiles_frame['target'][idx]]
-      else:
-        target = 0 if label == 'bonafide' else 1
+    target = PA_CLASSES_TFM[label]
 
-    db = 'la-challenge' if self.is_evaluating_la else 'pa-challenge'
-    path_db = os.path.join(self.root_dir, db)
-    if self.dataset != 'test':
-      if self.is_evaluating_la:
-        file_dir = 'S' + str(target)
-      else:
-        file_dir = 'genuine' if label == 'bonafide' else 'spoof'
-      file_path = os.path.join(path_db, 'flac-files', self.dataset, file_dir, nameFile + '.flac')
-    else: #if dataset == 'test'
-      file_path = os.path.join(path_db, 'flac-files', self.dataset, 'ASVspoof2019_' + nameFile[:2] + '_eval_v1/flac', nameFile + '.flac')
+    if self.dataset == 'train':
+      file_dir = 'ConjuntoDatosEntrenamiento'
+    elif self.dataset == 'development':
+      file_dir = 'ConjuntoDatosValidacion'
+    else:
+      file_dir = 'ConjuntoDatosEntrenamiento'
+
+    file_path = os.path.join(self.root_dir, file_dir, nameFile)
+
+
+    # if self.is_evaluating_la:
+    #   if label == 'bonafide':
+    #     label = 'A00'
+    #   else:
+    #     label = self.wavfiles_frame['target'][idx]
+    #   label = label[1:]
+    #   target = int(label)
+    # else:
+    #   if self.num_classes == 10:
+    #     target = PA_CLASSES[self.wavfiles_frame['target'][idx]]
+    #   else:
+    #     target = 0 if label == 'bonafide' else 1
+
+    # db = 'la-challenge' if self.is_evaluating_la else 'pa-challenge'
+    # path_db = os.path.join(self.root_dir, db)
+    # if self.dataset != 'test':
+    #   if self.is_evaluating_la:
+    #     file_dir = 'S' + str(target)
+    #   else:
+    #     file_dir = 'genuine' if label == 'bonafide' else 'spoof'
+    #   file_path = os.path.join(path_db, 'flac-files', self.dataset, file_dir, nameFile + '.flac')
+    # else: #if dataset == 'test'
+    #   file_path = os.path.join(path_db, 'flac-files', self.dataset, 'ASVspoof2019_' + nameFile[:2] + '_eval_v1/flac', nameFile + '.flac')
 
     # STFT features
     stft = get_stft(file_path, self.n_filts, self.n_frames, self.nperseg, self.noverlap, self.nfft)

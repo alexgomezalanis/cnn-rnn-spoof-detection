@@ -43,11 +43,11 @@ parser.add_argument('--is-la', default=True, type=lambda x: (str(x).lower() in [
                     help='Whether to train Logical or Physical Access')
 parser.add_argument('--train', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to train the model')
-parser.add_argument('--eval', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--eval', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to eval the model')
 parser.add_argument('--version', type=str, default='v3',
                     help='Version to save the model')
-parser.add_argument('--num-classes', type=int, default=7, metavar='N',
+parser.add_argument('--num-classes', type=int, default=13, metavar='N',
                     help='Number of training classes')
 parser.add_argument('--load-epoch', type=int, default=-1,
                     help='Saved epoch to load and start training')
@@ -69,14 +69,15 @@ def main():
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
   # Model and xvectors path
   rootPath = os.getcwd()
-  dirSpoof = 'LA' if args.is_la else 'PA'
-  dirEmbeddings = 'cnn_rnn_' + args.version + '_classes_' + str(args.num_classes) + '_model_' + dirSpoof
+  #dirSpoof = 'LA' if args.is_la else 'PA'
+  dirEmbeddings = 'cnn_rnn_' + args.version + '_classes_' + str(args.num_classes) + '_model_' #+ dirSpoof
 
-  model_location = os.path.join(rootPath, 'models', dirSpoof)
+  model_location = os.path.join(rootPath, 'models')#, dirSpoof)
   createDirectory(model_location)
 
   if args.train:
     if (args.load_epoch != -1):
+      print('El load epoco ha entrado en funcionamiento')
       path_model_location = os.path.join(model_location, 'epoch-' + str(args.load_epoch) + '.pt')
       model, optimizer, start_epoch, losslogger, accuracy = load_checkpoint(model, optimizer, model_location)
     else:
