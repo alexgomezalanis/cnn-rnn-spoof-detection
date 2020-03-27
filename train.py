@@ -1,11 +1,11 @@
 import os
 import sys
-import torch
-import torch.optim as optim
-import torch.nn as nn
-import torch.nn.functional as F
+import torch #The top-level PyTorch package and tensor library.
+import torch.optim as optim #A subpackage that contains standard optimization operations like SGD and Adam.
+import torch.nn as nn #A subpackage that contains modules and extensible classes for building neural networks.
+import torch.nn.functional as F #A functional interface that contains typical operations used for building neural networks like loss functions, activation functions, and convolution operations.
 import numpy as np
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader #A subpackage that contains utility classes like data sets and data loaders that make data preprocessing easier
 from dataset import CNN_RNN_Dataset
 from utils.checkpoint import load_checkpoint
 from utils.collate import collate
@@ -30,7 +30,6 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
     n_frames=args.num_frames,
     window=args.window_length,
     shift=args.frame_shift,
-    is_evaluating_la=args.is_la,
     dataset='training',
     num_classes=args.num_classes)
 
@@ -41,7 +40,6 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
     n_frames=args.num_frames,
     window=args.window_length,
     shift=args.frame_shift,
-    is_evaluating_la=args.is_la,
     dataset='development',
     num_classes=args.num_classes)
 
@@ -51,27 +49,27 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   dev_loader = DataLoader(dev_dataset, batch_size=args.test_batch_size, shuffle=False,
     num_workers=args.num_data_workers, collate_fn=collate)
 
-  numEpochsNotImproving = 0
-  best_acc = accuracy
-  epoch = start_epoch
-  while (numEpochsNotImproving < args.epochs):
-    train_epoch(epoch, args, model, device, train_loader, optimizer, criterion)
-    epoch += 1
-    dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev)
-    state = {
-      'epoch': epoch,
-      'state_dict': model.state_dict(),
-      'optimizer': optimizer.state_dict(),
-      'losslogger': dev_loss,
-      'accuracy': dev_accuracy
-    }
-    torch.save(state, model_location + '/epoch-' + str(epoch) + '.pt')
-    if (dev_accuracy > best_acc):
-      best_acc = dev_accuracy
-      numEpochsNotImproving = 0
-      torch.save(state, model_location + '/best.pt')
-    else:
-      numEpochsNotImproving += 1
+  # numEpochsNotImproving = 0
+  # best_acc = accuracy
+  # epoch = start_epoch
+  # while (numEpochsNotImproving < args.epochs):
+  #   train_epoch(epoch, args, model, device, train_loader, optimizer, criterion)
+  #   epoch += 1
+  #   dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev)
+  #   state = {
+  #     'epoch': epoch,
+  #     'state_dict': model.state_dict(),
+  #     'optimizer': optimizer.state_dict(),
+  #     'losslogger': dev_loss,
+  #     'accuracy': dev_accuracy
+  #   }
+  #   torch.save(state, model_location + '/epoch-' + str(epoch) + '.pt')
+  #   if (dev_accuracy > best_acc):
+  #     best_acc = dev_accuracy
+  #     numEpochsNotImproving = 0
+  #     torch.save(state, model_location + '/best.pt')
+  #   else:
+  #     numEpochsNotImproving += 1
 
 def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
   model.train()

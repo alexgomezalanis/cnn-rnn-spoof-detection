@@ -44,7 +44,7 @@ def eval(protocol, db, db_set, embeddings_location, softmax_location, args, mode
       window=args.window_length,
       shift=args.frame_shift,
       dataset=db_set,
-      is_evaluating_la=db == 'LA',    # Embeddings to evaluate
+      #is_evaluating_la=db == 'LA',    # Embeddings to evaluate
       dataframe=df_p,
       num_classes=args.num_classes)
   

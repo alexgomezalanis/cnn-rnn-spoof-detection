@@ -1,9 +1,9 @@
 from __future__ import print_function, division
 import argparse
-import torch
+import torch  #The top-level PyTorch package and tensor library.
 import os
-import torch.nn as nn
-import torch.optim as optim
+import torch.nn as nn #	A subpackage that contains modules and extensible classes for building neural networks.
+import torch.optim as optim #A subpackage that contains standard optimization operations like SGD and Adam.
 import torch.multiprocessing as mp
 from utils.checkpoint import load_checkpoint
 from utils.create_directory import createDirectory
@@ -39,8 +39,6 @@ parser.add_argument('--window-length', type=float, default=0.025,
                     help='Window Length to compute STFT (s)')
 parser.add_argument('--frame-shift', type=float, default=0.010,
                     help='Frame Shift to compute STFT (s)')
-parser.add_argument('--is-la', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
-                    help='Whether to train Logical or Physical Access')
 parser.add_argument('--train', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to train the model')
 parser.add_argument('--eval', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
@@ -77,7 +75,6 @@ def main():
 
   if args.train:
     if (args.load_epoch != -1):
-      print('El load epoco ha entrado en funcionamiento')
       path_model_location = os.path.join(model_location, 'epoch-' + str(args.load_epoch) + '.pt')
       model, optimizer, start_epoch, losslogger, accuracy = load_checkpoint(model, optimizer, model_location)
     else:
