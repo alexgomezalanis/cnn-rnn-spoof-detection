@@ -16,15 +16,18 @@ def plot_stft(t,f,Sxx,vmin=0):
 
 
 def get_stft(file_path, n_filts, n_frames, nperseg, noverlap, nfft):
-  print('n_frames:',n_frames,'nperseg:',nperseg,'noverlap',noverlap,'nfft',nfft)
+  #print('n_filts: ',n_filts,'n_frames:',n_frames,'nperseg:',nperseg,'noverlap',noverlap,'nfft',nfft)
   #blackman
   sig, fs = sf.read(file_path, dtype='float32')
-  print(len(sig))
+  #print('longitud del audio:',len(sig))
   f, t, Sxx =  signal.stft(sig, fs, window='hamming', nperseg=nperseg, noverlap=noverlap, nfft=nfft)
   Sxx = np.abs(Sxx)
-  print('Sxx shape',len(Sxx))
+  #print('longitud del vector de tiempos:',len(t))
+  #print('tiempos: ', t)
+  #print('longitud del vector de frecuencias:',len(f))
+  #print('frecuencias: ', f)
   features = np.where(Sxx > 1e-10, np.log10(Sxx), -10)
-  print(features)
-  print(features.shape)
-  data = np.reshape(features, (1, -1, n_filts)) # channel, frames, filters
-  return data
+  #print('forma de la stft: ',features.shape)
+  #print('stft: ',features)
+  #data = np.reshape(features, (1,-1, n_filts)) # channel, frames, filters  original -->(1,-1,n_filts)
+  return features

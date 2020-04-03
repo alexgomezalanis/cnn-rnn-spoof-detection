@@ -33,7 +33,7 @@ parser.add_argument('--num-data-workers', type=int, default=8,
                     help='How many processes to load data')
 parser.add_argument('--num-filts', type=int, default=256,
                     help='How many filters to compute STFT')
-parser.add_argument('--num-frames', type=int, default=32,
+parser.add_argument('--num-frames', type=int, default=128, #32
                     help='How many frames to compute STFT')
 parser.add_argument('--window-length', type=float, default=0.025,
                     help='Window Length to compute STFT (s)')

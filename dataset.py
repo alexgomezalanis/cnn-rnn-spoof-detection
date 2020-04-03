@@ -38,7 +38,6 @@ class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset
         frame shift (float): Frame shift in seconds
         dataset (string) [training, development, test]: training, development or test
     """
-    print('la clase se ha creado ')
     if dataframe is not None:
       self.wavfiles_frame = dataframe
     else:
@@ -47,7 +46,7 @@ class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset
     self.n_filts = n_filts
     self.n_frames = n_frames
     self.nperseg = int(window * Fs)
-    self.noverlap = int(self.nperseg - shift * Fs) #shif*Fs
+    self.noverlap = int(self.nperseg - shift * Fs) #shif*Fs  #original --> int(self.nperseg - shift * Fs)
     self.nfft = int(n_filts * 2)
     self.dataset = dataset
     self.num_classes = num_classes
@@ -60,9 +59,6 @@ class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset
     label = self.wavfiles_frame['label'][idx]
     nameFile = self.wavfiles_frame['wav'][idx]
     target = PA_CLASSES_TFM[label]
-
-    print(nameFile)
-
 
     if self.dataset == 'train':
       file_dir = 'ConjuntoDatosEntrenamiento'
