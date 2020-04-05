@@ -10,57 +10,47 @@ class CNN_RNN(nn.Module):
     self.n_frames = n_frames
     self.n_shift = n_shift
     self.conv1 = nn.Conv2d(1, 64, kernel_size=9, stride=1, padding=2)
-    self.conv2 = nn.Conv2d(64, 128, kernel_size=4, stride=1, padding=2)
-    self.gru = nn.GRUCell(input_size=128*28*14, hidden_size=128*28*14) #input size = 1920
-    self.fc2 = nn.Linear(128*28*14, num_classes) #input size = 1920 
+    self.conv2 = nn.Conv2d(64, 5, kernel_size=4, stride=1, padding=2)
+    self.gru = nn.GRUCell(input_size=5*28*14, hidden_size=5*28*14) #input size = 128*28*14
+    self.fc2 = nn.Linear(5*28*14,num_classes) #input size = 1920 
   
-  def forward(self, x, seq_length):
-    #deep_features = []
-    #for signal in signals:
-    #  for window_context in 
-    #    x = signal[:, ]
-    # x = F.max_pool2d(F.sigmoid(self.conv1(x)), kernel_size=3, stride=3, padding=0)
-    # x = F.max_pool2d(F.sigmoid(self.conv2(x)), kernel_size=3, stride=3, padding=0)
-    # x = x.view(-1, 1, self.num_flat_features(x)) #reshape del tensor
-    # hx = torch.randn(1, 1920).to(self.device)
-    # for i in range(seq_length):
-    #   hx = self.gru(x[i], hx)
-    # x = self.fc2(hx)
-    # return x
+  def forward(self, x):
     locuciones = x[0]
+    labels = torch.stack(x[1]).to(self.device)
+    print(labels)
+    salida_lineal = []
     for locucion in locuciones:
       ventanas = self.calcular_ventanas_espectrales(locucion)
-      cnn = [] 
+      cnn = []
       for ventana in ventanas:
-        ventana = ventana.unsqueeze(0)
-        ventana = ventana.unsqueeze(0)
-        x = F.max_pool2d(F.sigmoid(self.conv1(ventana)), kernel_size=3, stride=3, padding=0)
-        x = F.max_pool2d(F.sigmoid(self.conv2(x)), kernel_size=3, stride=3, padding=0)
-        x = x.squeeze(0)
-        cnn.append(x)
-      salida_cnn = torch.stack(cnn)
-      salida_cnn = salida_cnn.flatten()
-      x = self.gru(salida_cnn)
-      x = self.fc2(x)
-      print(salida_cnn.shape)
-    
+        ventana = ventana.unsqueeze(0) #añadimos una dimensión para decir que el numero de canales es 1
+        ventana = ventana.unsqueeze(0) #añadimos otra dimensión para decir que el tamaño del lote es 1
+        y = F.max_pool2d(torch.sigmoid(self.conv1(ventana)), kernel_size=3, stride=3, padding=0)
+        y = F.max_pool2d(torch.sigmoid(self.conv2(y)), kernel_size=3, stride=3, padding=0)
+        y = y.squeeze(0)
+        cnn.append(y)
+      y = torch.stack(cnn) #juntamos las diferentes embedding en un solo tensor [nº embeddings,nº canales,lenght,widht]
+      y = y.flatten(start_dim=1)
+      hx = torch.randn(1, 5*28*14).to(self.device)
+      for i in range(y.shape[0]):
+        hx = self.gru(y[i].unsqueeze(0), hx)
+      y = self.fc2(hx)
+      salida_lineal.append(y)
+    tensor_salida = torch.stack(salida_lineal).squeeze(1)
+    prediccion = F.softmax(tensor_salida,dim=1)
+    return (prediccion, labels)
+
   def calcular_ventanas_espectrales(self,locucion):
     overlap = self.n_frames - self.n_shift  #96: 128-32
     locucion = locucion[1:,:] #eliminamos la frecuencia O 257 --> 256
     start = 0
     end = self.n_frames
     list_spectral_windows = []
-    list_indices = []
     while end < locucion.shape[1] :
-      list_indices.append(start)
-      list_indices.append(end)
       list_spectral_windows.append(locucion[:,start:end])
       start = end - overlap
       end =  start + self.n_frames
     return list_spectral_windows
-
-
-
 
   def num_flat_features(self, x):
     size = x.size()[1:]  # all dimensions except the batch dimension
