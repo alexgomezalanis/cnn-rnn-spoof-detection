@@ -13,7 +13,7 @@ from train import train
 
 # Training settings
 parser = argparse.ArgumentParser(description='CNN RNN audio distortions')
-parser.add_argument('--batch-size', type=int, default=100, metavar='N',
+parser.add_argument('--batch-size', type=int, default=2, metavar='N',
                     help='input batch size for training (default: 100)')
 parser.add_argument('--epochs', type=int, default=2, metavar='N',
                     help='number of epochs for early stopping (default: 2)')
@@ -33,8 +33,10 @@ parser.add_argument('--num-data-workers', type=int, default=8,
                     help='How many processes to load data')
 parser.add_argument('--num-filts', type=int, default=256,
                     help='How many filters to compute STFT')
-parser.add_argument('--num-frames', type=int, default=128, #32
+parser.add_argument('--num-frames', type=int, default=128,
                     help='How many frames to compute STFT')
+parser.add_argument('--n-shift', type=int, default=32,
+                    help='')
 parser.add_argument('--window-length', type=float, default=0.025,
                     help='Window Length to compute STFT (s)')
 parser.add_argument('--frame-shift', type=float, default=0.010,
@@ -60,17 +62,18 @@ def main():
   dataloader_kwargs = {'pin_memory': True} if use_cuda else {}
 
   torch.manual_seed(args.seed)
+  # Los valores aleatorios seguirán siendo "aleatorios" pero en un orden definido.
+  # Es decir, si reinicia su script, se crearán los mismos números aleatorios.
 
   mp.set_start_method('spawn')
-  model = CNN_RNN(args.num_classes,args.num_frames,args.frame_shift,device).to(device)
+  model = CNN_RNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
   # Model and xvectors path
   rootPath = os.getcwd()
-  #dirSpoof = 'LA' if args.is_la else 'PA'
-  dirEmbeddings = 'cnn_rnn_' + args.version + '_classes_' + str(args.num_classes) + '_model_' #+ dirSpoof
+  dirEmbeddings = 'cnn_rnn_' + args.version + '_classes_' + str(args.num_classes) + '_model_'
 
-  model_location = os.path.join(rootPath, 'models')#, dirSpoof)
+  model_location = os.path.join(rootPath, 'models')
   createDirectory(model_location)
 
   if args.train:
@@ -78,6 +81,7 @@ def main():
       path_model_location = os.path.join(model_location, 'epoch-' + str(args.load_epoch) + '.pt')
       model, optimizer, start_epoch, losslogger, accuracy = load_checkpoint(model, optimizer, model_location)
     else:
+      print('empieza una epoca loco!')
       start_epoch = 0
       accuracy = 0
     train(

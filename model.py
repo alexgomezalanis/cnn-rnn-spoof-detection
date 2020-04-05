@@ -16,8 +16,7 @@ class CNN_RNN(nn.Module):
   
   def forward(self, x):
     locuciones = x[0]
-    labels = torch.stack(x[1]).to(self.device)
-    print(labels)
+    labels = torch.stack(x[1])
     salida_lineal = []
     for locucion in locuciones:
       ventanas = self.calcular_ventanas_espectrales(locucion)
@@ -37,8 +36,8 @@ class CNN_RNN(nn.Module):
       y = self.fc2(hx)
       salida_lineal.append(y)
     tensor_salida = torch.stack(salida_lineal).squeeze(1)
-    prediccion = F.softmax(tensor_salida,dim=1)
-    return (prediccion, labels)
+    samples = F.softmax(tensor_salida,dim=1)
+    return (samples, labels)
 
   def calcular_ventanas_espectrales(self,locucion):
     overlap = self.n_frames - self.n_shift  #96: 128-32

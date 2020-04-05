@@ -25,9 +25,9 @@ train_dataset = CNN_RNN_Dataset(
 csv_file='./protocols/' + train_protocol,
 root_dir=root_dir,
 n_filts=num_filts,
-n_frames=num_frames,
+n_frames=num_frames, #128
 window=window_length,
-shift=frame_shift,
+shift=frame_shift, #32
 dataset='training',
 num_classes=num_classes)
 
@@ -38,4 +38,5 @@ train_loader = DataLoader(train_dataset, batch_size=3, shuffle=True,
 
 muestras = next(iter(train_loader))
 model = CNN_RNN(num_classes,n_frames,n_shift,device)
+print(muestras)
 model(muestras)
