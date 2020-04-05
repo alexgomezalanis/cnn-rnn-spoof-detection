@@ -13,7 +13,7 @@ from train import train
 
 # Training settings
 parser = argparse.ArgumentParser(description='CNN RNN audio distortions')
-parser.add_argument('--batch-size', type=int, default=2, metavar='N',
+parser.add_argument('--batch-size', type=int, default=100, metavar='N',
                     help='input batch size for training (default: 100)')
 parser.add_argument('--epochs', type=int, default=2, metavar='N',
                     help='number of epochs for early stopping (default: 2)')
@@ -81,7 +81,6 @@ def main():
       path_model_location = os.path.join(model_location, 'epoch-' + str(args.load_epoch) + '.pt')
       model, optimizer, start_epoch, losslogger, accuracy = load_checkpoint(model, optimizer, model_location)
     else:
-      print('empieza una epoca loco!')
       start_epoch = 0
       accuracy = 0
     train(
@@ -93,28 +92,6 @@ def main():
       optimizer=optimizer,
       device=device,
       model_location=model_location)
-
-  if args.eval:
-    # Eval Embeddings
-    if (args.load_epoch != -1):
-      path_model_location = os.path.join(model_location, 'epoch-' + str(args.load_epoch) + '.pt')
-    else:
-      path_model_location = os.path.join(model_location, 'best.pt')
-    model, optimizer, start_epoch, losslogger, accuracy = load_checkpoint(model, optimizer, path_model_location)
-
-    model.eval()
-
-'''
-  eval_voxceleb(
-      protocol='train_protocol.csv',
-      args=args,
-      model=model,
-      embeddings_location=embeddings_location,
-      softmax_location=softmax_location,
-      device=device,
-      mp=mp)
-
-'''
 
 if __name__ == '__main__':
   main()

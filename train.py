@@ -71,13 +71,10 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
   model.train()
   pid = os.getpid()
   for batch_idx, sample in enumerate(data_loader):
-    #(stft, target, _) = sample
-    #target = torch.LongTensor(target).to(device)
-
     optimizer.zero_grad()
     output = model(sample)
-    data = output[0]
-    target = output[1]
+    data = output[0].to(device)
+    target = output[1].to(device)
     loss = criterion(data, target)
     optimizer.zero_grad() # zero the parameter gradients
     loss.backward()
@@ -94,8 +91,6 @@ def test_epoch(model, device, data_loader, criterion):
   correct = 0
   with torch.no_grad():
     for batch_idx, sample in enumerate(data_loader):
-      #(stft, target, _) = sample
-      #target = torch.LongTensor(target).to(device)
       output = model(sample)
       data = output[0]
       target = output[1]
