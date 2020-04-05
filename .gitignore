@@ -131,3 +131,7 @@ dmypy.json
 
 /database
 /protocols
+/best.pt
+/epoch-1.pt
+/epoch-2.pt
+/epoch-3.pt
