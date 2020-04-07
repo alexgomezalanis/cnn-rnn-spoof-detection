@@ -17,10 +17,15 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
 
   train_protocol = 'ConjuntoDatosEntrenamiento.csv'
   dev_protocol = 'ConjuntoDatosValidacion.csv'
-  root_dir = '../database'
-  print('num_frame: ',args.num_frames,'num_filts: ',args.num_filts,'window_lenght: ', args.window_length,'frame_shift: ',args.frame_shift)
+
+  if args.is_googleColab:
+    root_dir = '../content/drive/My\Drive/database'
+  else:
+    root_dir = './database'
+  
+
   train_dataset = CNN_RNN_Dataset(
-    csv_file='../protocols/' + train_protocol,
+    csv_file='./protocols/' + train_protocol,
     root_dir=root_dir,
     n_filts=args.num_filts,
     n_frames=args.num_frames,
@@ -30,7 +35,7 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
     num_classes=args.num_classes)
 
   dev_dataset = CNN_RNN_Dataset(
-    csv_file='../protocols/' + dev_protocol,
+    csv_file='./protocols/' + dev_protocol,
     root_dir=root_dir,
     n_filts=args.num_filts,
     n_frames=args.num_frames,
