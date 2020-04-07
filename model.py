@@ -9,10 +9,10 @@ class CNN_RNN(nn.Module):
     self.device = device
     self.n_frames = n_frames
     self.n_shift = n_shift
-    self.conv1 = nn.Conv2d(1, 64, kernel_size=9, stride=1, padding=2)
-    self.conv2 = nn.Conv2d(64, 128, kernel_size=4, stride=1, padding=2)
-    self.gru = nn.GRUCell(input_size=128*28*14, hidden_size=128*28*14) #input size = 128*28*14
-    self.fc2 = nn.Linear(128*28*14,num_classes) #input size = 1920 
+    self.conv1 = nn.Conv2d(1, 32, kernel_size=9, stride=1, padding=2)
+    self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=1, padding=2)
+    self.gru = nn.GRUCell(input_size=64*28*14, hidden_size=64*28*14) #input size = 128*28*14
+    self.fc2 = nn.Linear(64*28*14,num_classes) #input size = 1920 
   
   def forward(self, x):
     locuciones = x[0]
@@ -30,7 +30,7 @@ class CNN_RNN(nn.Module):
         cnn.append(y)
       y = torch.stack(cnn) #juntamos las diferentes embedding en un solo tensor [nº embeddings,nº canales,lenght,widht]
       y = y.flatten(start_dim=1)
-      hx = torch.randn(1, 128*28*14).to(self.device)
+      hx = torch.randn(1, 64*28*14).to(self.device)
       for i in range(y.shape[0]):
         hx = self.gru(y[i].unsqueeze(0), hx)
       y = self.fc2(hx)
