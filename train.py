@@ -37,7 +37,7 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
     num_classes=args.num_classes)
 
   dev_dataset = CNN_RNN_Dataset(
-    csv_file='./protocols/' + dev_protocol,
+    csv_file=csv_dir + '/' + dev_protocol,
     root_dir=root_dir,
     n_filts=args.num_filts,
     n_frames=args.num_frames,
