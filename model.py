@@ -24,6 +24,7 @@ class CNN_RNN(nn.Module):
       for ventana in ventanas:
         ventana = ventana.unsqueeze(0) #añadimos una dimensión para decir que el numero de canales es 1
         ventana = ventana.unsqueeze(0) #añadimos otra dimensión para decir que el tamaño del lote es 1
+        print(type(ventana))
         y = F.max_pool2d(torch.sigmoid(self.conv1(ventana)), kernel_size=3, stride=3, padding=0)
         y = F.max_pool2d(torch.sigmoid(self.conv2(y)), kernel_size=3, stride=3, padding=0)
         y = y.squeeze(0)
@@ -41,7 +42,7 @@ class CNN_RNN(nn.Module):
 
   def calcular_ventanas_espectrales(self,locucion):
     overlap = self.n_frames - self.n_shift  #96: 128-32
-    locucion = locucion[1:,:] #eliminamos la frecuencia O 257 --> 256
+    locucion = locucion[1:,:].to(self.device) #eliminamos la frecuencia O 257 --> 256
     start = 0
     end = self.n_frames
     list_spectral_windows = []

@@ -99,8 +99,8 @@ def test_epoch(model, device, data_loader, criterion):
   with torch.no_grad():
     for batch_idx, sample in enumerate(data_loader):
       output = model(sample)
-      data = output[0]
-      target = output[1]
+      data = output[0].to(device)
+      target = output[1].to(device)
       test_loss += criterion(data, target).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(target).sum().item()
