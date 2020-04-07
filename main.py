@@ -15,7 +15,7 @@ from train import train
 parser = argparse.ArgumentParser(description='CNN RNN audio distortions')
 parser.add_argument('--is-googleColab', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='True: train with google Colab// False: train in local')
-parser.add_argument('--batch-size', type=int, default=2, metavar='N',
+parser.add_argument('--batch-size', type=int, default=100, metavar='N',
                     help='input batch size for training (default: 100)')
 parser.add_argument('--epochs', type=int, default=2, metavar='N',
                     help='number of epochs for early stopping (default: 2)')

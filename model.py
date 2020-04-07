@@ -24,7 +24,6 @@ class CNN_RNN(nn.Module):
       for ventana in ventanas:
         ventana = ventana.unsqueeze(0) #añadimos una dimensión para decir que el numero de canales es 1
         ventana = ventana.unsqueeze(0) #añadimos otra dimensión para decir que el tamaño del lote es 1
-        print(type(ventana))
         y = F.max_pool2d(torch.sigmoid(self.conv1(ventana)), kernel_size=3, stride=3, padding=0)
         y = F.max_pool2d(torch.sigmoid(self.conv2(y)), kernel_size=3, stride=3, padding=0)
         y = y.squeeze(0)
