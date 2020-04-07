@@ -19,7 +19,7 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   dev_protocol = 'ConjuntoDatosValidacion.csv'
 
   if args.is_googleColab:
-    root_dir = '/content/drive/My\Drive/database'
+    root_dir = '/content/drive/My Drive/database'
     csv_dir = '/content/cnn-rnn-spoof-detection/protocols'
   else:
     root_dir = './database'
