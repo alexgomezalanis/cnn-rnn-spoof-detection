@@ -19,13 +19,15 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   dev_protocol = 'ConjuntoDatosValidacion.csv'
 
   if args.is_googleColab:
-    root_dir = '../content/drive/My\Drive/database'
+    root_dir = '/content/drive/My\Drive/database'
+    csv_dir = '/content/cnn-rnn-spoof-detection/protocols'
   else:
     root_dir = './database'
+    csv_dir = './protocols'
   
 
   train_dataset = CNN_RNN_Dataset(
-    csv_file='./protocols/' + train_protocol,
+    csv_file= csv_dir + '/' + train_protocol,
     root_dir=root_dir,
     n_filts=args.num_filts,
     n_frames=args.num_frames,
