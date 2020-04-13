@@ -24,9 +24,11 @@ class CNN_RNN(nn.Module):
       for ventana in ventanas:
         ventana = ventana.unsqueeze(0) #añadimos una dimensión para decir que el numero de canales es 1
         ventana = ventana.unsqueeze(0) #añadimos otra dimensión para decir que el tamaño del lote es 1
+        print('procesado de una ventana espectral: ', ventana.shape)
         y = F.max_pool2d(torch.RReLU(self.conv1(ventana)), kernel_size=3, stride=3, padding=0)
         y = F.max_pool2d(torch.RReLU(self.conv2(y)), kernel_size=3, stride=3, padding=0)
         y = y.squeeze(0)
+        print('Salida de las CNN: ', y.shape)
         cnn.append(y)
       y = torch.stack(cnn)
       y = y.flatten(start_dim=1)
