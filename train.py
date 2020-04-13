@@ -78,7 +78,6 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
   model.train()
   pid = os.getpid()
   for batch_idx, sample in enumerate(data_loader):
-    optimizer.zero_grad()
     output = model(sample)
     data = output[0].to(device)
     target = output[1].to(device)
