@@ -48,21 +48,21 @@ muestras = next(iter(train_loader))
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(),3e-4)
 
-pid = os.getpid()
-epoch=0
-batch_idx=0
-output = model(muestras)
-data = output[0].to(device)
-target = output[1].to(device)
+# pid = os.getpid()
+# epoch=0
+# batch_idx=0
+# output = model(muestras)
+# data = output[0].to(device)
+# target = output[1].to(device)
 # loss = criterion(data, target)
 # optimizer.zero_grad() 
 # loss.backward()
 # optimizer.step()
 
-print(data)
-print(target)
-print(data.max(1)[1])
-print(data.max(1)[1].eq(target).sum().item())
+# print(data)
+# print(target)
+# print(data.max(1)[1])
+# print(data.max(1)[1].eq(target).sum().item())
 
 # print('len_data',len(data))
 # print('train_loader_len',len(train_loader))
