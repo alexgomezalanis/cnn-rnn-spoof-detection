@@ -24,25 +24,27 @@ class CNN_RNN(nn.Module):
       for ventana in ventanas:
         ventana = ventana.unsqueeze(0) #añadimos una dimensión para decir que el numero de canales es 1
         ventana = ventana.unsqueeze(0) #añadimos otra dimensión para decir que el tamaño del lote es 1
-        print('procesado de una ventana espectral: ', ventana.shape)
+        # print('procesado de una ventana espectral: ', ventana.shape)
         y = F.max_pool2d(F.leaky_relu(self.conv1(ventana)), kernel_size=3, stride=3, padding=0)
         y = F.max_pool2d(F.leaky_relu(self.conv2(y)), kernel_size=3, stride=3, padding=0)
         y = y.squeeze(0)
-        print('Salida de las CNN: ', y.shape)
+        # print('Salida de las CNN: ', y.shape)
         cnn.append(y)
       y = torch.stack(cnn)
       y = y.flatten(start_dim=1)
-      print('Entrada a la RNN: ', y.shape)
+      # print('Entrada a la RNN: ', y.shape)
       hx = torch.randn(1, 16*28*14).to(self.device)
       for i in range(y.shape[0]):
         hx = self.gru(y[i].unsqueeze(0), hx)
       y = self.fc2(hx)
       salida_lineal.append(y)
-    samples = torch.stack(salida_lineal)
-    print('Salida final: ', samples.shape)
+    samples = torch.stack(salida_lineal).squeeze(1)
+    # print('Salida final: ', samples.shape)
     return (samples, labels)
 
   def calcular_ventanas_espectrales(self,locucion):
+    # print('--------CALCULO VENTANAS ESPECTRALES-------')
+    # print('-------------------------------------')
     overlap = self.n_frames - self.n_shift  #96: 128-32
     locucion = locucion[1:,:].to(self.device) #eliminamos la frecuencia O 257 --> 256
     start = 0

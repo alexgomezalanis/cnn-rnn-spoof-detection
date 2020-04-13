@@ -38,7 +38,7 @@ model = CNN_RNN(num_classes,n_frames,n_shift,device)
 
 muestra = next(iter(train_dataset))
 
-train_loader = DataLoader(train_dataset, batch_size=3, shuffle=True,
+train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True,
      num_workers=0, collate_fn=collate)
 
 muestras = next(iter(train_loader))
