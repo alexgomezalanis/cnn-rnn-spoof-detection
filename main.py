@@ -71,11 +71,16 @@ def main():
   model = CNN_RNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
-  # Model and xvectors path
-  rootPath = os.getcwd()
-  dirEmbeddings = 'cnn_rnn_' + args.version + '_classes_' + str(args.num_classes) + '_model_'
 
-  model_location = os.path.join(rootPath, 'models')
+
+
+  # Model and xvectors path
+  dirEmbeddings = 'cnn_rnn_' + args.version + '_classes_' + str(args.num_classes) + '_model_'
+  if not args.is_googleColab:
+    rootPath = os.getcwd()
+    model_location = os.path.join(rootPath, 'models')
+  else:
+    model_location = os.path.join('/content/drive/My Drive', 'models')
   createDirectory(model_location)
 
   if args.train:
