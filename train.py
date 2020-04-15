@@ -140,8 +140,8 @@ def generate_confusion_matrix(model,prediction_loader,device):
   with torch.no_grad():
     train_preds, all_labels = get_all_preds(model, prediction_loader,device)
     pred = train_preds.max(1)[1] # get the index of the max probability
-  
-  return confusion_matrix(all_labels,pred)
+    mc = confusion_matrix(all_labels.cpu(),pred.cpu())
+  return mc
 
 
 
