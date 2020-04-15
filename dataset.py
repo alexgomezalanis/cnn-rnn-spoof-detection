@@ -12,6 +12,10 @@ PA_CLASSES_TFM = {'limpio': 0,
  'clipping_5_10_percent': 1, 'clipping_09_5_percent': 2,'clipping_20_40_percent': 3, 'clipping_40_70_percent': 4,
  'reverberacion_Lowhight': 5, 'reverberacion_MediumLow': 6, 'reverberacion_MediumHight': 7, 'reverberacion_Hight': 8,
  'noise_0_5db_SNR': 9,'noise_5_10db_SNR': 10,'noise_10_20db_SNR': 11 }
+
+LIST_CLASSES = ('limpio','clipping_5_10_percent','clipping_09_5_percent','clipping_20_40_percent','clipping_40_70_percent'
+                'reverberacion_Lowhight','reverberacion_MediumLow','reverberacion_MediumHight','reverberacion_Hight',
+                'noise_0_5db_SNR','noise_5_10db_SNR','noise_10_20db_SNR')
 Fs = 16000 # Hz
 
 class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset 
@@ -50,6 +54,7 @@ class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset
     self.nfft = int(n_filts * 2)
     self.dataset = dataset
     self.num_classes = num_classes
+    self.classes = LIST_CLASSES
 
   def __len__(self):
     return len(self.wavfiles_frame)
@@ -64,6 +69,8 @@ class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset
       file_dir = 'ConjuntoDatosEntrenamiento'
     elif self.dataset == 'development':
       file_dir = 'ConjuntoDatosValidacion'
+    elif self.dataset == 'ConjuntoPruebas':
+      file_dir = 'ConjuntoPruebas'
     else:
       file_dir = 'ConjuntoDatosEntrenamiento'
 

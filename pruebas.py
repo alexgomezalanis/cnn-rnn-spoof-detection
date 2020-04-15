@@ -7,11 +7,16 @@ from model import CNN_RNN
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
+from train import train
+from sklearn.metrics import confusion_matrix
+from resources.plotcm import plot_confusion_matrix
+import matplotlib.pyplot as plt
+from train import generate_confusion_matrix
 
 
 train_protocol = 'ConjuntoDatosEntrenamiento.csv'
 dev_protocol = 'ConjuntoDatosValidacion.csv'
+pruebas_protocol = 'ConjuntoPruebas.csv'
 root_dir = './database'
 
 print('Programa de pruebas:')
@@ -25,26 +30,23 @@ num_classes = 12
 device = torch.device("cpu")
 
 train_dataset = CNN_RNN_Dataset(
-csv_file='./protocols/' + train_protocol,
+csv_file='./protocols/' + pruebas_protocol,
 root_dir=root_dir,
 n_filts=num_filts,
 n_frames=num_frames, #128
 window=window_length,
 shift=frame_shift, #32
-dataset='training',
+dataset='ConjuntoPruebas',
 num_classes=num_classes)
 
 model = CNN_RNN(num_classes,n_frames,n_shift,device)
 
-muestra = next(iter(train_dataset))
 
-train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True,
-     num_workers=0, collate_fn=collate)
-
-muestras = next(iter(train_loader))
-
-model(muestras)
+train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True,
+    num_workers=2, collate_fn=collate)
 
 
-
+cm = generate_confusion_matrix(model,train_loader)
+plt.figure(figsize=(num_classes,num_classes))
+plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
 
