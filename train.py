@@ -89,33 +89,44 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
 
 def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
   model.train()
+  correct = 0
+  train_loss=0
   pid = os.getpid()
-  for batch_idx, sample in enumerate(data_loader):
-    output = model(sample)
-    data = output[0].to(device)
-    target = output[1].to(device)
-    loss = criterion(data, target)
+  for batch_idx, batch in enumerate(data_loader):
+    stfts = batch[0]
+    targets = torch.stack(batch[1]).to(device)
+    data = model(stfts).to(device)
+    loss = criterion(data, targets)
     optimizer.zero_grad() # zero the parameter gradients
     loss.backward()
     optimizer.step()
+    #calculamos el numero de errores en cada batch
+    pred = data.max(1)[1] # get the index of the max probability
+    correct += pred.eq(targets).sum().item()
+    train_loss += loss
     if batch_idx % args.log_interval == 0:
       print('{}\tTrain Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
         pid, epoch, batch_idx * len(data), len(data_loader.dataset),
         100. * batch_idx / len(data_loader), loss.item()))
       sys.stdout.flush()
+  #datos a mostrar al terminar una epoca de entrenamiento
+  test_accuracy = 100. * correct / len(data_loader.dataset)
+  print('\nTraining set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+    train_loss, correct, len(data_loader.dataset), test_accuracy))
+
 
 def test_epoch(model, device, data_loader, criterion):
   model.eval()
   test_loss = 0
   correct = 0
   with torch.no_grad(): #indicamos que no hay que tener en cuenta el calculo de gradiente (Desactivamos)
-    for batch_idx, sample in enumerate(data_loader):
-      output = model(sample)
-      data = output[0].to(device)
-      target = output[1].to(device)
-      test_loss += criterion(data, target).item() # sum up batch loss
+    for batch_idx, batch in enumerate(data_loader):
+      stfts = batch[0]
+      targets = torch.stack(batch[1]).to(device)
+      data = model(stfts).to(device)
+      test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
-      correct += pred.eq(target).sum().item()
+      correct += pred.eq(targets).sum().item()
 
   test_loss /= len(data_loader.dataset)
   test_accuracy = 100. * correct / len(data_loader.dataset)
@@ -138,9 +149,9 @@ def get_all_preds(model, loader,device):
   all_preds = torch.tensor([]).to(device)
   all_labels = torch.tensor([],dtype=torch.long).to(device)
   for batch in loader:
-    output = model(batch)
-    preds = output[0].to(device)
-    target = output[1].to(device)
+    stfts = batch[0]
+    targets = torch.stack(batch[1]).to(device)
+    preds = model(stfts).to(device)
     all_preds = torch.cat((all_preds,preds),dim=0)
-    all_labels = torch.cat((all_labels,target),dim=0)
+    all_labels = torch.cat((all_labels,targets),dim=0)
   return all_preds, all_labels
