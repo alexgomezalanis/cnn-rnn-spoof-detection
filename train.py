@@ -5,10 +5,13 @@ import torch.optim as optim #A subpackage that contains standard optimization op
 import torch.nn as nn #A subpackage that contains modules and extensible classes for building neural networks.
 import torch.nn.functional as F #A functional interface that contains typical operations used for building neural networks like loss functions, activation functions, and convolution operations.
 import numpy as np
+import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader #A subpackage that contains utility classes like data sets and data loaders that make data preprocessing easier
 from dataset import CNN_RNN_Dataset
 from utils.checkpoint import load_checkpoint
 from utils.collate import collate
+from sklearn.metrics import confusion_matrix
+from resources.plotcm import plot_confusion_matrix
 
 rootPath = os.getcwd()
 
@@ -108,5 +111,12 @@ def test_epoch(model, device, data_loader, criterion):
   test_accuracy = 100. * correct / len(data_loader.dataset)
   print('\nDevelopment set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(data_loader.dataset), test_accuracy))
+
+
+  def confusion_matrix():
+    print("working")
+
+
+
 
   return test_accuracy, test_loss
