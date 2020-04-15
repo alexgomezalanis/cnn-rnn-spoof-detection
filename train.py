@@ -78,12 +78,12 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
       numEpochsNotImproving += 1
   #pintamos la matrix de confusión en la última epoca 
   #------entrenamiento------
-  cm = generate_confusion_matrix(model,train_loader)
+  cm = generate_confusion_matrix(model,train_loader,device)
   plt.figure(figsize=(args.num_classes,args.num_classes))
   plot_confusion_matrix(cm,train_dataset.classes,title='Train Confusion matrix')
 
   #-----validacion-----------
-  cm = generate_confusion_matrix(model,dev_loader)
+  cm = generate_confusion_matrix(model,dev_loader,device)
   plt.figure(figsize=(args.num_classes,args.num_classes))
   plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
 
@@ -125,22 +125,22 @@ def test_epoch(model, device, data_loader, criterion):
   return test_accuracy, test_loss
 
  
-def generate_confusion_matrix(model,prediction_loader):
+def generate_confusion_matrix(model,prediction_loader,device):
   with torch.no_grad():
-    train_preds, all_labels = get_all_preds(model, prediction_loader)
+    train_preds, all_labels = get_all_preds(model, prediction_loader,device)
     pred = train_preds.max(1)[1] # get the index of the max probability
   
   return confusion_matrix(all_labels,pred)
 
 
 
-def get_all_preds(model, loader):
-  all_preds = torch.tensor([])
-  all_labels = torch.tensor([],dtype=torch.long)
+def get_all_preds(model, loader,device):
+  all_preds = torch.tensor([]).to(device)
+  all_labels = torch.tensor([],dtype=torch.long).to(device)
   for batch in loader:
     output = model(batch)
-    preds = output[0]
-    target = output[1]
+    preds = output[0].to(device)
+    target = output[1].to(device)
     all_preds = torch.cat((all_preds,preds),dim=0)
     all_labels = torch.cat((all_labels,target),dim=0)
   return all_preds, all_labels
