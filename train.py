@@ -55,11 +55,6 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   dev_loader = DataLoader(dev_dataset, batch_size=args.test_batch_size, shuffle=False,
     num_workers=args.num_data_workers, collate_fn=collate)
 
-   #------entrenamiento------
-  cm = generate_confusion_matrix(model,train_loader,device)
-  plt.figure(figsize=(args.num_classes,args.num_classes))
-  plot_confusion_matrix(cm,train_dataset.classes,title='Train Confusion matrix')
-
   numEpochsNotImproving = 0
   best_acc = accuracy
   epoch = start_epoch
