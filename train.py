@@ -94,7 +94,7 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
   pid = os.getpid()
   for batch_idx, batch in enumerate(data_loader):
     stfts = batch[0]
-    targets = torch.stack(batch[1]).to(device)
+    targets = torch.stack(batch[1])
     data = model(stfts).to(device)
     loss = criterion(data, targets)
     optimizer.zero_grad() # zero the parameter gradients
@@ -122,7 +122,7 @@ def test_epoch(model, device, data_loader, criterion):
   with torch.no_grad(): #indicamos que no hay que tener en cuenta el calculo de gradiente (Desactivamos)
     for batch_idx, batch in enumerate(data_loader):
       stfts = batch[0]
-      targets = torch.stack(batch[1]).to(device)
+      targets = torch.stack(batch[1])
       data = model(stfts).to(device)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
@@ -150,7 +150,7 @@ def get_all_preds(model, loader,device):
   all_labels = torch.tensor([],dtype=torch.long).to(device)
   for batch in loader:
     stfts = batch[0]
-    targets = torch.stack(batch[1]).to(device)
+    targets = torch.stack(batch[1])
     preds = model(stfts).to(device)
     all_preds = torch.cat((all_preds,preds),dim=0)
     all_labels = torch.cat((all_labels,targets),dim=0)
