@@ -46,7 +46,7 @@ train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True,
     num_workers=2, collate_fn=collate)
 
 
-cm = generate_confusion_matrix(model,train_loader)
+cm = generate_confusion_matrix(model,train_loader,device)
 plt.figure(figsize=(num_classes,num_classes))
 plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
 
