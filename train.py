@@ -111,7 +111,7 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
       sys.stdout.flush()
   #datos a mostrar al terminar una epoca de entrenamiento
   test_accuracy = 100. * correct / len(data_loader.dataset)
-  print('\nTraining set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+  print('\tTraining set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     train_loss, correct, len(data_loader.dataset), test_accuracy))
 
 
