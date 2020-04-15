@@ -17,7 +17,7 @@ from train import generate_confusion_matrix
 train_protocol = 'ConjuntoDatosEntrenamiento.csv'
 dev_protocol = 'ConjuntoDatosValidacion.csv'
 pruebas_protocol = 'ConjuntoPruebas.csv'
-root_dir = './database'
+root_dir = '/content/drive/My Drive/database'
 
 print('Programa de pruebas:')
 n_frames = 128
