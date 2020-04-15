@@ -15,7 +15,8 @@ class CNN_RNN(nn.Module):
     self.fc2 = nn.Linear(16*28*14,num_classes)
   
   def forward(self, x):
-    locuciones = x
+    locuciones = x[0]
+    labels = torch.stack(x[1])
     salida_lineal = []
     for locucion in locuciones:
       ventanas = self.calcular_ventanas_espectrales(locucion)
@@ -39,7 +40,7 @@ class CNN_RNN(nn.Module):
       salida_lineal.append(y)
     samples = torch.stack(salida_lineal).squeeze(1)
     # print('Salida final: ', samples.shape)
-    return samples
+    return (samples, labels)
 
   def calcular_ventanas_espectrales(self,locucion):
     # print('--------CALCULO VENTANAS ESPECTRALES-------')

@@ -149,9 +149,9 @@ def get_all_preds(model, loader,device):
   all_preds = torch.tensor([]).to(device)
   all_labels = torch.tensor([],dtype=torch.long).to(device)
   for batch in loader:
-    stfts = batch[0]
-    targets = torch.stack(batch[1])
-    preds = model(stfts).to(device)
+    output = model(batch)
+    preds = output[0].to(device)
+    target = output[1].to(device)
     all_preds = torch.cat((all_preds,preds),dim=0)
-    all_labels = torch.cat((all_labels,targets),dim=0)
+    all_labels = torch.cat((all_labels,target),dim=0)
   return all_preds, all_labels

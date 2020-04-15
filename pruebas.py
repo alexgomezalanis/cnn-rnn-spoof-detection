@@ -27,7 +27,7 @@ num_frames = 32
 window_length = 0.025
 frame_shift = 0.01
 num_classes = 12
-device = torch.device("cpu")
+device = torch.device("cuda")
 
 train_dataset = CNN_RNN_Dataset(
 csv_file='./protocols/' + pruebas_protocol,
