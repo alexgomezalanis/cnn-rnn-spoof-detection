@@ -95,7 +95,7 @@ def test_epoch(model, device, data_loader, criterion):
   model.eval()
   test_loss = 0
   correct = 0
-  with torch.no_grad():
+  with torch.no_grad(): #indicamos que no hay que tener en cuenta el calculo de gradiente (Desactivamos)
     for batch_idx, sample in enumerate(data_loader):
       output = model(sample)
       data = output[0].to(device)
