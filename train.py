@@ -78,12 +78,15 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
       numEpochsNotImproving += 1
   #pintamos la matrix de confusión en la última epoca 
   #------entrenamiento------
+  outfile = model_location + '/cmTrain-epoch-' + str(epoch)
   cm = generate_confusion_matrix(model,train_loader,device)
+  cm.save(outfile,cm)
   plt.figure(figsize=(args.num_classes,args.num_classes))
   plot_confusion_matrix(cm,train_dataset.classes,title='Train Confusion matrix')
-
   #-----validacion-----------
+  outfile = model_location + '/cmTrain-epoch-' + str(epoch)
   cm = generate_confusion_matrix(model,dev_loader,device)
+  cm.save(outfile,cm)
   plt.figure(figsize=(args.num_classes,args.num_classes))
   plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
 

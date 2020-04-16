@@ -12,12 +12,13 @@ from sklearn.metrics import confusion_matrix
 from resources.plotcm import plot_confusion_matrix
 import matplotlib.pyplot as plt
 from train import generate_confusion_matrix
+import numpy as np
 
 
 train_protocol = 'ConjuntoDatosEntrenamiento.csv'
 dev_protocol = 'ConjuntoDatosValidacion.csv'
 pruebas_protocol = 'ConjuntoPruebas.csv'
-root_dir = '/content/drive/My Drive/database'
+root_dir = './database'
 
 print('Programa de pruebas:')
 n_frames = 128
@@ -27,7 +28,7 @@ num_frames = 32
 window_length = 0.025
 frame_shift = 0.01
 num_classes = 12
-device = torch.device("cuda")
+device = torch.device("cpu")
 
 train_dataset = CNN_RNN_Dataset(
 csv_file='./protocols/' + pruebas_protocol,
@@ -45,8 +46,9 @@ model = CNN_RNN(num_classes,n_frames,n_shift,device)
 train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True,
     num_workers=2, collate_fn=collate)
 
-
+outfile = './' + 'cmTrain-epoch-' + str(0)
 cm = generate_confusion_matrix(model,train_loader,device)
+np.save(outfile,cm)
 plt.figure(figsize=(num_classes,num_classes))
 plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
 
