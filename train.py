@@ -84,7 +84,7 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   plt.figure(figsize=(args.num_classes,args.num_classes))
   plot_confusion_matrix(cm,train_dataset.classes,title='Train Confusion matrix')
   #-----validacion-----------
-  outfile = model_location + '/cmTrain-epoch-' + str(epoch)
+  outfile = model_location + '/cmValidation-epoch-' + str(epoch)
   cm = generate_confusion_matrix(model,dev_loader,device)
   np.save(outfile,cm)
   plt.figure(figsize=(args.num_classes,args.num_classes))
