@@ -108,7 +108,7 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
     #calculamos el numero de errores en cada batch
     pred = data.max(1)[1] # get the index of the max probability
     correct += pred.eq(targets).sum().item()
-    train_loss += loss
+    train_loss += loss.item()
     if batch_idx % args.log_interval == 0:
       print('{}\tTrain Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
         pid, epoch, batch_idx * len(data), len(data_loader.dataset),
