@@ -13,7 +13,7 @@ from resources.plotcm import plot_confusion_matrix
 import matplotlib.pyplot as plt
 from train import generate_confusion_matrix
 import numpy as np
-from tensorboardcolab import TensorBoardColab
+from torch.utils.tensorboard import SummaryWriter
 
 
 train_protocol = 'ConjuntoDatosEntrenamiento.csv'
@@ -44,12 +44,9 @@ num_classes=num_classes)
 model = CNN_RNN(num_classes,n_frames,n_shift,device)
 
 
-train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True,
-    num_workers=2, collate_fn=collate)
+
+writer = SummaryWriter()
+
+writer.close()
 
 
-tb = TensorBoardColab()
-
-batch = next(iter(train_loader))
-
-tb.close()
