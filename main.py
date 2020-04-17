@@ -51,7 +51,7 @@ parser.add_argument('--version', type=str, default='v3',
                     help='Version to save the model')
 parser.add_argument('--num-classes', type=int, default=12, metavar='N',
                     help='Number of training classes')
-parser.add_argument('--load-epoch', type=int, default=4,
+parser.add_argument('--load-epoch', type=int, default=-1,
                     help='Saved epoch to load and start training')
 
 
