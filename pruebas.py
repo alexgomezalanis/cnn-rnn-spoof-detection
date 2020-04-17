@@ -13,6 +13,7 @@ from resources.plotcm import plot_confusion_matrix
 import matplotlib.pyplot as plt
 from train import generate_confusion_matrix
 import numpy as np
+from torch.utils.tensorboard import SummaryWriter
 
 
 train_protocol = 'ConjuntoDatosEntrenamiento.csv'
@@ -46,9 +47,9 @@ model = CNN_RNN(num_classes,n_frames,n_shift,device)
 train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True,
     num_workers=2, collate_fn=collate)
 
-outfile = './' + 'cmTrain-epoch-' + str(0)
-cm = generate_confusion_matrix(model,train_loader,device)
-np.save(outfile,cm)
-plt.figure(figsize=(num_classes,num_classes))
-plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
 
+tb = SummaryWriter()
+
+batch = next(iter(train_loader))
+
+tb.close()
