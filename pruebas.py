@@ -46,6 +46,11 @@ model = CNN_RNN(num_classes,n_frames,n_shift,device)
 
 
 writer = SummaryWriter()
+for n_iter in range(200):
+    writer.add_scalar('Loss/train', np.random.random(), n_iter)
+    writer.add_scalar('Loss/test', np.random.random(), n_iter)
+    writer.add_scalar('Accuracy/train', np.random.random(), n_iter)
+    writer.add_scalar('Accuracy/test', np.random.random(), n_iter)
 
 writer.close()
 
