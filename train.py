@@ -76,7 +76,7 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
       torch.save(state, model_location + '/best.pt')
     else:
       numEpochsNotImproving += 1
-  #pintamos la matrix de confusión en la última epoca 
+  #pintamos la matriz de confusión en la última epoca 
   #------entrenamiento------
   outfile = model_location + '/cmTrain-epoch-' + str(epoch)
   cm = generate_confusion_matrix(model,train_loader,device)

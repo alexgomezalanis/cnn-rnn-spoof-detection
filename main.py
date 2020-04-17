@@ -31,8 +31,8 @@ parser.add_argument('--num-processes', type=int, default=5, metavar='N',
                     help='how many eval processes to use (default: 5)')
 parser.add_argument('--cuda', action='store_true', default=True,
                     help='enables CUDA training')
-parser.add_argument('--num-data-workers', type=int, default=8,
-                    help='How many processes to load data')
+parser.add_argument('--num-data-workers', type=int, default=2,
+                    help='How many processes to load data') #default=8
 parser.add_argument('--num-filts', type=int, default=256,
                     help='How many filters to compute STFT')
 parser.add_argument('--num-frames', type=int, default=128,
