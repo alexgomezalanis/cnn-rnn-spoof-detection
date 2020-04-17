@@ -9,11 +9,11 @@ from torch.utils.data import Dataset, DataLoader
 from utils.get_stft import get_stft
 
 PA_CLASSES_TFM = {'limpio': 0,
- 'clipping_5_10_percent': 1, 'clipping_09_5_percent': 2,'clipping_20_40_percent': 3, 'clipping_40_70_percent': 4,
+ 'clipping_09_5_percent': 1,'clipping_5_10_percent': 2,'clipping_20_40_percent': 3, 'clipping_40_70_percent': 4,
  'reverberacion_Lowhight': 5, 'reverberacion_MediumLow': 6, 'reverberacion_MediumHight': 7, 'reverberacion_Hight': 8,
  'noise_0_5db_SNR': 9,'noise_5_10db_SNR': 10,'noise_10_20db_SNR': 11 }
 
-LIST_CLASSES = ('limpio','clipping_5_10_percent','clipping_09_5_percent','clipping_20_40_percent','clipping_40_70_percent',
+LIST_CLASSES = ('limpio','clipping_09_5_percent','clipping_5_10_percent','clipping_20_40_percent','clipping_40_70_percent',
                 'reverberacion_Lowhight','reverberacion_MediumLow','reverberacion_MediumHight','reverberacion_Hight',
                 'noise_0_5db_SNR','noise_5_10db_SNR','noise_10_20db_SNR')
 Fs = 16000 # Hz
