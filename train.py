@@ -91,7 +91,6 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   np.save(outfile,cm)
   plt.figure(figsize=(args.num_classes,args.num_classes))
   plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
-  tb.close()
 
 def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb,globariter):
   model.train()
@@ -99,7 +98,7 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb
   train_loss=0
   pid = os.getpid()
   for batch_idx, batch in enumerate(data_loader):
-    globariterTrain +=1
+    globariter +=1
     stfts = batch[0]
     targets = torch.stack(batch[1])
     targets = targets.to(device)
