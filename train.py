@@ -19,6 +19,7 @@ rootPath = os.getcwd()
 def train(args, model, start_epoch, accuracy, criterion, optimizer, device, model_location):
   criterion_dev = nn.CrossEntropyLoss(reduction='sum')
   tb = SummaryWriter()
+  globaliter = 0
   train_protocol = 'ConjuntoDatosEntrenamiento.csv'
   dev_protocol = 'ConjuntoDatosValidacion.csv'
 
@@ -60,9 +61,9 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   best_acc = accuracy
   epoch = start_epoch
   while (numEpochsNotImproving < args.epochs):
-    train_epoch(epoch, args, model, device, train_loader, optimizer, criterion,tb)
+    train_epoch(epoch, args, model, device, train_loader, optimizer, criterion,tb,globaliter)
     epoch += 1
-    dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev,tb,epoch)
+    dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev,tb,epoch,globaliter)
     state = {
       'epoch': epoch,
       'state_dict': model.state_dict(),
@@ -92,12 +93,13 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
   tb.close()
 
-def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb):
+def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb,globariter):
   model.train()
   correct = 0
   train_loss=0
   pid = os.getpid()
   for batch_idx, batch in enumerate(data_loader):
+    globariterTrain +=1
     stfts = batch[0]
     targets = torch.stack(batch[1])
     targets = targets.to(device)
@@ -116,18 +118,17 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb
         pid, epoch, batch_idx * len(data), len(data_loader.dataset),
         100. * batch_idx / len(data_loader), loss.item()))
       sys.stdout.flush()
+      tb.add_scalar('Loss/train', loss.item(), globariter)
   #----UNA VEZ QUE TERMINA LA EPOCA DE ENTRENAMIENTO------------------------
   train_loss /= len(data_loader.dataset)
   train_accuracy = 100. * correct / len(data_loader.dataset)
   print('\tTraining set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     train_loss, correct, len(data_loader.dataset), train_accuracy))
       #-------enviamos los resultados a tensorboard-------------------
-  tb.add_scalar('Loss_train', train_loss, epoch)
-  tb.add_scalar('NumberCorrect_train', correct, epoch)
-  tb.add_scalar('Accuracy_train', train_accuracy, epoch)
+  tb.add_scalar('Accuracy/train', train_accuracy, epoch)
+  
 
-
-def test_epoch(model, device, data_loader, criterion,tb,epoch):
+def test_epoch(model, device, data_loader, criterion,tb,epoch,globaliter):
   model.eval()
   test_loss = 0
   correct = 0
@@ -147,9 +148,8 @@ def test_epoch(model, device, data_loader, criterion,tb,epoch):
   print('\nDevelopment set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(data_loader.dataset), test_accuracy))
         #-------enviamos los resultados a tensorboard-------------------
-  tb.add_scalar('Loss_val', test_loss, epoch)
-  tb.add_scalar('NumberCorrect_val', correct, epoch)
-  tb.add_scalar('Accuracy_val', test_accuracy, epoch)
+  tb.add_scalar('Loss/val', test_loss, globaliter)
+  tb.add_scalar('Accuracy/val', test_accuracy, epoch)
   return test_accuracy, test_loss
 
  
