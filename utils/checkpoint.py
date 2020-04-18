@@ -16,8 +16,9 @@ def load_checkpoint(model, optimizer, filename):
     optimizer.load_state_dict(checkpoint['optimizer'])
     losslogger = checkpoint['losslogger']
     accuracy = checkpoint['accuracy']
+    numEpochsNotImproving = checkpoint['numEpochsNotImproving']
     print("=> loaded checkpoint '{}' (epoch {})".format(filename, checkpoint['epoch']))
   else:
     print("=> no checkpoint found at '{}'".format(filename))
 
-  return model, optimizer, start_epoch, losslogger, accuracy
+  return model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving

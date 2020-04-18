@@ -86,8 +86,9 @@ def main():
   if args.train:
     if (args.load_epoch != -1):
       path_model_location = os.path.join(model_location, 'epoch-' + str(args.load_epoch) + '.pt')
-      model, optimizer, start_epoch, losslogger, accuracy = load_checkpoint(model, optimizer, path_model_location)
+      model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
     else:
+      numEpochsNotImproving=0
       start_epoch = 0
       accuracy = 0
     train(
@@ -95,6 +96,7 @@ def main():
       model=model,
       start_epoch=start_epoch,
       accuracy=accuracy,
+      numEpochsNotImproving=numEpochsNotImproving,
       criterion=criterion,
       optimizer=optimizer,
       device=device,

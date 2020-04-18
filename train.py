@@ -16,7 +16,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 rootPath = os.getcwd()
 
-def train(args, model, start_epoch, accuracy, criterion, optimizer, device, model_location):
+def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, optimizer, device, model_location):
   criterion_dev = nn.CrossEntropyLoss(reduction='sum')
   tb = SummaryWriter()
   globaliter = 0
@@ -57,7 +57,7 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   dev_loader = DataLoader(dev_dataset, batch_size=args.test_batch_size, shuffle=False,
     num_workers=args.num_data_workers, collate_fn=collate)
 
-  numEpochsNotImproving = 0
+  numEpochsNotImproving = numEpochsNotImproving
   best_acc = accuracy
   epoch = start_epoch
   while (numEpochsNotImproving < args.epochs):
@@ -69,7 +69,8 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
       'state_dict': model.state_dict(),
       'optimizer': optimizer.state_dict(),
       'losslogger': dev_loss,
-      'accuracy': dev_accuracy
+      'accuracy': dev_accuracy,
+      'numEpochsNotImproving': numEpochsNotImproving
     }
     torch.save(state, model_location + '/epoch-' + str(epoch) + '.pt')
     if (dev_accuracy > best_acc):
