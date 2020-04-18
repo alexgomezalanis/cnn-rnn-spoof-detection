@@ -15,7 +15,7 @@ from train import train
 parser = argparse.ArgumentParser(description='CNN RNN audio distortions')
 parser.add_argument('--is-googleColab', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='True: train with google Colab// False: train in local')
-parser.add_argument('--batch-size', type=int, default=50, metavar='N',
+parser.add_argument('--batch-size', type=int, default=25, metavar='N',
                     help='input batch size for training (default: 100)')
 parser.add_argument('--epochs', type=int, default=1, metavar='N',
                     help='number of epochs for early stopping (default: 2)')
@@ -31,7 +31,7 @@ parser.add_argument('--num-processes', type=int, default=5, metavar='N',
                     help='how many eval processes to use (default: 5)')
 parser.add_argument('--cuda', action='store_true', default=True,
                     help='enables CUDA training')
-parser.add_argument('--num-data-workers', type=int, default=2,
+parser.add_argument('--num-data-workers', type=int, default=8,
                     help='How many processes to load data') #default=8
 parser.add_argument('--num-filts', type=int, default=256,
                     help='How many filters to compute STFT')
