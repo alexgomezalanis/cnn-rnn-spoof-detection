@@ -42,6 +42,7 @@ dataset='ConjuntoPruebas',
 num_classes=num_classes)
 
 model = CNN_RNN(num_classes,n_frames,n_shift,device)
+    
 
 
 

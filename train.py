@@ -1,23 +1,24 @@
 import os
 import sys
-import torch #The top-level PyTorch package and tensor library.
-import torch.optim as optim #A subpackage that contains standard optimization operations like SGD and Adam.
-import torch.nn as nn #A subpackage that contains modules and extensible classes for building neural networks.
-import torch.nn.functional as F #A functional interface that contains typical operations used for building neural networks like loss functions, activation functions, and convolution operations.
+import torch
+import torch.optim as optim
+import torch.nn as nn
+import torch.nn.functional as F 
 import numpy as np
 import matplotlib.pyplot as plt
-from torch.utils.data import DataLoader #A subpackage that contains utility classes like data sets and data loaders that make data preprocessing easier
+from torch.utils.data import DataLoader
 from dataset import CNN_RNN_Dataset
 from utils.checkpoint import load_checkpoint
 from utils.collate import collate
 from sklearn.metrics import confusion_matrix
 from resources.plotcm import plot_confusion_matrix
+from torch.utils.tensorboard import SummaryWriter
 
 rootPath = os.getcwd()
 
 def train(args, model, start_epoch, accuracy, criterion, optimizer, device, model_location):
   criterion_dev = nn.CrossEntropyLoss(reduction='sum')
-
+  tb = SummaryWriter()
   train_protocol = 'ConjuntoDatosEntrenamiento.csv'
   dev_protocol = 'ConjuntoDatosValidacion.csv'
 
@@ -59,9 +60,9 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   best_acc = accuracy
   epoch = start_epoch
   while (numEpochsNotImproving < args.epochs):
-    train_epoch(epoch, args, model, device, train_loader, optimizer, criterion)
+    train_epoch(epoch, args, model, device, train_loader, optimizer, criterion,tb)
     epoch += 1
-    dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev)
+    dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev,tb,epoch)
     state = {
       'epoch': epoch,
       'state_dict': model.state_dict(),
@@ -89,8 +90,9 @@ def train(args, model, start_epoch, accuracy, criterion, optimizer, device, mode
   np.save(outfile,cm)
   plt.figure(figsize=(args.num_classes,args.num_classes))
   plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
+  tb.close()
 
-def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
+def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb):
   model.train()
   correct = 0
   train_loss=0
@@ -102,10 +104,10 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
     data = model(stfts)
     data = data.to(device)
     loss = criterion(data, targets)
-    optimizer.zero_grad() # zero the parameter gradients
+    optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-    #calculamos el numero de errores en cada batch
+    #-------SE CALCULA EL NUMERO DE ERRORES DE CADA BATCH Y SE VA ACOMULANDO---------------
     pred = data.max(1)[1] # get the index of the max probability
     correct += pred.eq(targets).sum().item()
     train_loss += loss.item()
@@ -114,14 +116,18 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion):
         pid, epoch, batch_idx * len(data), len(data_loader.dataset),
         100. * batch_idx / len(data_loader), loss.item()))
       sys.stdout.flush()
-  #datos a mostrar al terminar una epoca de entrenamiento
+  #----UNA VEZ QUE TERMINA LA EPOCA DE ENTRENAMIENTO------------------------
   train_loss /= len(data_loader.dataset)
-  test_accuracy = 100. * correct / len(data_loader.dataset)
+  train_accuracy = 100. * correct / len(data_loader.dataset)
   print('\tTraining set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-    train_loss, correct, len(data_loader.dataset), test_accuracy))
+    train_loss, correct, len(data_loader.dataset), train_accuracy))
+      #-------enviamos los resultados a tensorboard-------------------
+  tb.add_scalar('Loss_train', train_loss, epoch)
+  tb.add_scalar('NumberCorrect_train', correct, epoch)
+  tb.add_scalar('Accuracy_train', train_accuracy, epoch)
 
 
-def test_epoch(model, device, data_loader, criterion):
+def test_epoch(model, device, data_loader, criterion,tb,epoch):
   model.eval()
   test_loss = 0
   correct = 0
@@ -135,12 +141,15 @@ def test_epoch(model, device, data_loader, criterion):
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(targets).sum().item()
-
+  #----UNA VEZ QUE TERMINA LA EPOCA DE ENTRENAMIENTO------------------------
   test_loss /= len(data_loader.dataset)
   test_accuracy = 100. * correct / len(data_loader.dataset)
   print('\nDevelopment set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(data_loader.dataset), test_accuracy))
-
+        #-------enviamos los resultados a tensorboard-------------------
+  tb.add_scalar('Loss_val', test_loss, epoch)
+  tb.add_scalar('NumberCorrect_val', correct, epoch)
+  tb.add_scalar('Accuracy_val', test_accuracy, epoch)
   return test_accuracy, test_loss
 
  
