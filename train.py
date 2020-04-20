@@ -88,11 +88,11 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
       torch.save(state, model_location + '/best.pt')
       #guardamos la matriz de confusion de entrenamiento y validacion
         #------entrenamiento------
-      outfile = model_location + '/cmTrain-best-' + str(epoch)
+      outfile = model_location + '/cmTrain-best'
       cm = generate_confusion_matrix(model,train_loader,device)
       np.save(outfile,cm)
         #-----validacion-----------
-      outfile = model_location + '/cmValidation-best-' + str(epoch)
+      outfile = model_location + '/cmValidation-best'
       cm = generate_confusion_matrix(model,dev_loader,device)
       np.save(outfile,cm)
     else:
