@@ -68,8 +68,8 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
   accuracy_train_per_epoch = []
   while (numEpochsNotImproving < args.epochs):
     epoch += 1
-    train_accuracy, train_loss = train_epoch(epoch, args, model, device, train_loader, optimizer, criterion,tb,globaliter)
-    dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev,tb,epoch,globaliter)
+    train_accuracy, train_loss = train_epoch(epoch, args, model, device, train_loader, optimizer, criterion,tb)
+    dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev,tb,epoch)
     state = {
       'epoch': epoch,
       'state_dict': model.state_dict(),
