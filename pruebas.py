@@ -44,15 +44,9 @@ num_classes=num_classes)
 model = CNN_RNN(num_classes,n_frames,n_shift,device)
     
 
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True,
+num_workers=0, collate_fn=collate)
 
-
-writer = SummaryWriter()
-for n_iter in range(200):
-    writer.add_scalar('Loss/train', np.random.random(), n_iter)
-    writer.add_scalar('Loss/test', np.random.random(), n_iter)
-    writer.add_scalar('Accuracy/train', np.random.random(), n_iter)
-    writer.add_scalar('Accuracy/test', np.random.random(), n_iter)
-
-writer.close()
+muestra = next(iter(train_loader))
 
 
