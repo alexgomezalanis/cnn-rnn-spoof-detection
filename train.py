@@ -100,10 +100,10 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
   #cuando el entrenamiento termine se guardan los vectores con los resultados:
     #------train--------
   np.save(model_location + '/vAccuracyTrain',np.array(accuracy_vector_train))
-  np.save(mode_location + '/vLossTrain',np.array(loss_vector_train))
+  np.save(model_location + '/vLossTrain',np.array(loss_vector_train))
     #------val--------
   np.save(model_location + '/vAccuracyVal',np.array(accuracy_vector_val))
-  np.save(mode_location + '/vLossVal',np.array(loss_vector_val))
+  np.save(model_location + '/vLossVal',np.array(loss_vector_val))
 
 def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb):
   model.train()
