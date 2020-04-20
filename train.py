@@ -129,7 +129,7 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb
         pid, epoch, batch_idx * len(data), len(data_loader.dataset),
         100. * batch_idx / len(data_loader), loss.item()))
       sys.stdout.flush()
-      tb.add_scalar('Loss/train', loss.item(),(batch_idx /len(data_loader))+epoch-1)
+      tb.add_scalar('Loss/train', loss.item(),(batch_idx /len(data_loader))+epoch)
   #----UNA VEZ QUE TERMINA LA EPOCA DE ENTRENAMIENTO------------------------
   train_loss /= len(data_loader.dataset)
   train_accuracy = 100. * correct / len(data_loader.dataset)
