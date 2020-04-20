@@ -17,7 +17,7 @@ parser.add_argument('--is-googleColab', default=True, type=lambda x: (str(x).low
                     help='True: train with google Colab// False: train in local')
 parser.add_argument('--batch-size', type=int, default=50, metavar='N',
                     help='input batch size for training (default: 100)')
-parser.add_argument('--epochs', type=int, default=1, metavar='N',
+parser.add_argument('--epochs', type=int, default=4, metavar='N',
                     help='number of epochs for early stopping (default: 2)')
 parser.add_argument('--test-batch-size', type=int, default=100, metavar='N',
                     help='input batch size for testing (default: 100)')
