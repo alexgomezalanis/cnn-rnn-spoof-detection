@@ -137,7 +137,7 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb
     train_loss, correct, len(data_loader.dataset), train_accuracy))
       #-------enviamos los resultados a tensorboard-------------------
   tb.add_scalar('Accuracy/train', train_accuracy, epoch)
-
+  tb.add_scalar('AverageLoss/train',train_loss,epoch)
   return train_accuracy, train_loss
   
 
@@ -161,7 +161,7 @@ def test_epoch(model, device, data_loader, criterion,tb,epoch):
   print('\nDevelopment set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(data_loader.dataset), test_accuracy))
         #-------enviamos los resultados a tensorboard-------------------
-  tb.add_scalar('Loss/val', test_loss,epoch)
+  tb.add_scalar('AverageLoss/val', test_loss,epoch)
   tb.add_scalar('Accuracy/val', test_accuracy, epoch)
   return test_accuracy, test_loss
 
