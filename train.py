@@ -57,12 +57,18 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
   dev_loader = DataLoader(dev_dataset, batch_size=args.test_batch_size, shuffle=False,
     num_workers=args.num_data_workers, collate_fn=collate)
 
+  accuracy_vector_train = []
+  accuracy_vector_val = []
+  loss_vector_val = []
+  loss_vector_train = []
+
   numEpochsNotImproving = numEpochsNotImproving
   best_acc = accuracy
   epoch = start_epoch
+  accuracy_train_per_epoch = []
   while (numEpochsNotImproving < args.epochs):
     epoch += 1
-    train_epoch(epoch, args, model, device, train_loader, optimizer, criterion,tb,globaliter)
+    train_accuracy, train_loss = train_epoch(epoch, args, model, device, train_loader, optimizer, criterion,tb,globaliter)
     dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev,tb,epoch,globaliter)
     state = {
       'epoch': epoch,
@@ -73,33 +79,38 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
       'numEpochsNotImproving': numEpochsNotImproving
     }
     torch.save(state, model_location + '/epoch-' + str(epoch) + '.pt')
+    accuracy_vector_train.append(train_accuracy)
+    accuracy_vector_val.append(dev_accuracy)
+    loss_vector_val.append(dev_loss)
     if (dev_accuracy > best_acc):
       best_acc = dev_accuracy
       numEpochsNotImproving = 0
       torch.save(state, model_location + '/best.pt')
+      #guardamos la matriz de confusion de entrenamiento y validacion
+        #------entrenamiento------
+      outfile = model_location + '/cmTrain-best-' + str(epoch)
+      cm = generate_confusion_matrix(model,train_loader,device)
+      np.save(outfile,cm)
+        #-----validacion-----------
+      outfile = model_location + '/cmValidation-best-' + str(epoch)
+      cm = generate_confusion_matrix(model,dev_loader,device)
+      np.save(outfile,cm)
     else:
       numEpochsNotImproving += 1
-  #pintamos la matriz de confusión en la última epoca 
-  #------entrenamiento------
-  outfile = model_location + '/cmTrain-epoch-' + str(epoch)
-  cm = generate_confusion_matrix(model,train_loader,device)
-  np.save(outfile,cm)
-  plt.figure(figsize=(args.num_classes,args.num_classes))
-  plot_confusion_matrix(cm,train_dataset.classes,title='Train Confusion matrix')
-  #-----validacion-----------
-  outfile = model_location + '/cmValidation-epoch-' + str(epoch)
-  cm = generate_confusion_matrix(model,dev_loader,device)
-  np.save(outfile,cm)
-  plt.figure(figsize=(args.num_classes,args.num_classes))
-  plot_confusion_matrix(cm,train_dataset.classes,title='Validation Confusion matrix')
+  #cuando el entrenamiento termine se guardan los vectores con los resultados:
+    #------train--------
+  np.save(model_location + '/vAccuracyTrain',np.array(accuracy_vector_train))
+  np.save(mode_location + '/vLossTrain',np.array(loss_vector_train))
+    #------val--------
+  np.save(model_location + '/vAccuracyVal',np.array(accuracy_vector_val))
+  np.save(mode_location + '/vLossVal',np.array(loss_vector_val))
 
-def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb,globariter):
+def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb):
   model.train()
   correct = 0
   train_loss=0
   pid = os.getpid()
   for batch_idx, batch in enumerate(data_loader):
-    globariter +=1
     stfts = batch[0]
     targets = torch.stack(batch[1])
     targets = targets.to(device)
@@ -118,7 +129,7 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb
         pid, epoch, batch_idx * len(data), len(data_loader.dataset),
         100. * batch_idx / len(data_loader), loss.item()))
       sys.stdout.flush()
-      tb.add_scalar('Loss/train', loss.item(), globariter)
+      tb.add_scalar('Loss/train', loss.item(),(batch_idx /len(data_loader))+epoch-1)
   #----UNA VEZ QUE TERMINA LA EPOCA DE ENTRENAMIENTO------------------------
   train_loss /= len(data_loader.dataset)
   train_accuracy = 100. * correct / len(data_loader.dataset)
@@ -126,9 +137,11 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb
     train_loss, correct, len(data_loader.dataset), train_accuracy))
       #-------enviamos los resultados a tensorboard-------------------
   tb.add_scalar('Accuracy/train', train_accuracy, epoch)
+
+  return train_accuracy, train_loss
   
 
-def test_epoch(model, device, data_loader, criterion,tb,epoch,globaliter):
+def test_epoch(model, device, data_loader, criterion,tb,epoch):
   model.eval()
   test_loss = 0
   correct = 0
@@ -148,7 +161,7 @@ def test_epoch(model, device, data_loader, criterion,tb,epoch,globaliter):
   print('\nDevelopment set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(data_loader.dataset), test_accuracy))
         #-------enviamos los resultados a tensorboard-------------------
-  tb.add_scalar('Loss/val', test_loss, globaliter)
+  tb.add_scalar('Loss/val', test_loss,epoch)
   tb.add_scalar('Accuracy/val', test_accuracy, epoch)
   return test_accuracy, test_loss
 
