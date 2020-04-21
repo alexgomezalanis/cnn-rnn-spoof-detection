@@ -82,6 +82,7 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
     accuracy_vector_train.append(train_accuracy)
     accuracy_vector_val.append(dev_accuracy)
     loss_vector_val.append(dev_loss)
+    loss_vector_train.append(train_loss)
     if (dev_accuracy > best_acc):
       best_acc = dev_accuracy
       numEpochsNotImproving = 0
