@@ -18,8 +18,9 @@ def plot_stft(t,f,file_path, Sxx,vmin=0):
 
 def get_stft(file_path, n_filts, n_frames, nperseg, noverlap, nfft):
   sig, fs = sf.read(file_path, dtype='float32')
+  sig = (sig - np.mean(sig))/np.std(sig)
   f, t, Sxx =  signal.stft(sig, fs, window='hamming', nperseg=nperseg, noverlap=noverlap, nfft=nfft)
   Sxx = np.abs(Sxx)
   features = np.where(Sxx > 1e-10, np.log10(Sxx), -10)
-  #features = (features - np.mean(features))/np.std(features)
+  features = (features - np.mean(features))/np.std(features)
   return features
