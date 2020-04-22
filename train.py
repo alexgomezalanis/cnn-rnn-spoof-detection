@@ -67,6 +67,7 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
   epoch = start_epoch
   accuracy_train_per_epoch = []
   while (numEpochsNotImproving < args.epochs):
+    print('numEpochsNotImproving',numEpochsNotImproving)
     epoch += 1
     train_accuracy, train_loss = train_epoch(epoch, args, model, device, train_loader, optimizer, criterion,tb)
     dev_accuracy, dev_loss = test_epoch(model, device, dev_loader, criterion_dev,tb,epoch)
@@ -105,6 +106,7 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
     #------val--------
   np.save(model_location + '/vAccuracyVal',np.array(accuracy_vector_val))
   np.save(model_location + '/vLossVal',np.array(loss_vector_val))
+  print('FIN, numEpochsNotImproving: ',numEpochsNotImproving)
 
 def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb):
   model.train()
@@ -118,19 +120,18 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb
     data = model(stfts)
     data = data.to(device)
     loss = criterion(data, targets)
+    train_loss += loss.item()
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
     #-------SE CALCULA EL NUMERO DE ERRORES DE CADA BATCH Y SE VA ACOMULANDO---------------
     pred = data.max(1)[1] # get the index of the max probability
     correct += pred.eq(targets).sum().item()
-    train_loss += loss.item()
     if batch_idx % args.log_interval == 0:
       print('{}\tTrain Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
         pid, epoch, batch_idx * len(data), len(data_loader.dataset),
         100. * batch_idx / len(data_loader), loss.item()))
       sys.stdout.flush()
-      tb.add_scalar('Loss/train', loss.item(),(batch_idx /len(data_loader))+epoch)
   #----UNA VEZ QUE TERMINA LA EPOCA DE ENTRENAMIENTO------------------------
   train_loss /= len(data_loader.dataset)
   train_accuracy = 100. * correct / len(data_loader.dataset)
