@@ -120,12 +120,12 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer, criterion,tb
     data = model(stfts)
     data = data.to(device)
     loss = criterion(data, targets)
-    train_loss += loss.item()
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
     #-------SE CALCULA EL NUMERO DE ERRORES DE CADA BATCH Y SE VA ACOMULANDO---------------
     pred = data.max(1)[1] # get the index of the max probability
+    train_loss += loss.item()
     correct += pred.eq(targets).sum().item()
     if batch_idx % args.log_interval == 0:
       print('{}\tTrain Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
