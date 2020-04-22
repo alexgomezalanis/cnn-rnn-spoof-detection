@@ -12,10 +12,10 @@ class CNN_RNN(nn.Module):
     self.conv1 = nn.Conv2d(1, 16, kernel_size=9, stride=1, padding=2)
     self.bn1= nn.BatchNorm2d(16)
     self.conv2 = nn.Conv2d(16, 16, kernel_size=4, stride=1, padding=2)
-    self.dropoutCNN = nn.Dropout(p=0.1)
+    self.dropoutCNN = nn.Dropout2d(p=0.3)
     self.bn2= nn.BatchNorm2d(16)
     self.gru = nn.GRUCell(input_size=16*28*14, hidden_size=16*28*14)
-    self.dropoutRNN = nn.Dropout(p=0.2)
+    self.dropoutRNN = nn.Dropout1d(p=0.5)
     self.fc2 = nn.Linear(16*28*14,num_classes)
   
   def forward(self, x):
@@ -27,15 +27,15 @@ class CNN_RNN(nn.Module):
       for ventana in ventanas:
         ventana = ventana.unsqueeze(0)
         ventana = ventana.unsqueeze(0)
-        y = F.max_pool2d(self.bn1(F.leaky_relu(self.conv1(ventana))), kernel_size=3, stride=3, padding=0)
-        y = F.max_pool2d(self.bn2(F.leaky_relu(self.conv2(y))), kernel_size=3, stride=3, padding=0)
+        y = F.max_pool2d(self.bn1(F.leaky_relu(self.dropoutCNN(self.conv1(ventana)))), kernel_size=3, stride=3, padding=0)
+        y = F.max_pool2d(self.bn2(F.leaky_relu(self.dropoutCNN(self.conv2(y)))), kernel_size=3, stride=3, padding=0)
         y = y.squeeze(0)
         cnn.append(y)
       y = torch.stack(cnn)
       y = y.flatten(start_dim=1)
       hx = torch.randn(1, 16*28*14).to(self.device)
       for i in range(y.shape[0]):
-        hx = self.gru(y[i].unsqueeze(0), hx)
+        hx = self.dropoutRNN(self.gru(y[i].unsqueeze(0), hx))
       y = self.fc2(hx)
       salida_lineal.append(y)
     samples = torch.stack(salida_lineal).squeeze(1)
