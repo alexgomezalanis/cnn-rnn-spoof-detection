@@ -15,7 +15,7 @@ class CNN_RNN(nn.Module):
     self.dropoutCNN = nn.Dropout2d(p=0.3)
     self.bn2= nn.BatchNorm2d(16)
     self.gru = nn.GRUCell(input_size=16*28*14, hidden_size=16*28*14)
-    self.dropoutRNN = nn.Dropout1d(p=0.5)
+    self.dropoutRNN = nn.Dropout(p=0.5)
     self.fc2 = nn.Linear(16*28*14,num_classes)
   
   def forward(self, x):
