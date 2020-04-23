@@ -43,9 +43,9 @@ parser.add_argument('--window-length', type=float, default=0.025,
                     help='Window Length to compute STFT (s)')
 parser.add_argument('--frame-shift', type=float, default=0.010,
                     help='Frame Shift to compute STFT (s)')
-parser.add_argument('--train', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--train', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to train the model')
-parser.add_argument('--eval', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--eval', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to eval the model')
 parser.add_argument('--version', type=str, default='v3',
                     help='Version to save the model')
@@ -84,6 +84,7 @@ def main():
   createDirectory(model_location)
 
   if args.train:
+    print('Empieza el entrenamiento:\n')
     if (args.load_epoch != -1):
       path_model_location = os.path.join(model_location, 'epoch-' + str(args.load_epoch) + '.pt')
       model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
@@ -102,5 +103,17 @@ def main():
       device=device,
       model_location=model_location)
 
+  if args.eval: #TEST!
+    print('Empieza el Test:\n')
+    path_model_location = os.path.join(model_location, 'best.pt')
+    model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
+    eval(
+      args=args,
+      model=model,
+      optimizer=optimizer,
+      device=device,
+      model_location=model_location)
+
+    
 if __name__ == '__main__':
   main()

@@ -7,53 +7,87 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from dataset import CNN_RNN_Dataset
 from utils.collate import collate
+import torch.nn as nn
+from sklearn.metrics import confusion_matrix
+
 
 rootPath = os.getcwd()
 
-def test_epoch(model, device, data_loader, db_set, dirEmbeddings, dirSoftmax, db):
+
+def eval(args, model, optimizer, device, model_location):
+  criterion_dev = nn.CrossEntropyLoss(reduction='sum')
+
+  test_protocol = 'ConjuntoDatosTest.csv'
+  if args.is_googleColab:
+    root_dir = '/content/drive/My Drive/database'
+    csv_dir = '/content/cnn-rnn-spoof-detection/protocols'
+  else:
+    root_dir = './database'
+    csv_dir = './protocols'
+  
+  test_dataset = CNN_RNN_Dataset(
+    csv_file=csv_dir + '/' + test_protocol,
+    root_dir=root_dir,
+    n_filts=args.num_filts,
+    n_frames=args.num_frames,
+    window=args.window_length,
+    shift=args.frame_shift,
+    dataset='test',
+    num_classes=args.num_classes)
+
+  test_loader = DataLoader(test_dataset, batch_size=args.test_batch_size, shuffle=False,
+    num_workers=args.num_data_workers, collate_fn=collate)
+
+  dev_accuracy, dev_loss = test_epoch(model, device, test_loader, criterion_dev)
+
+  #-----validacion-----------
+  outfile = model_location + '/cmTest'
+  cm = generate_confusion_matrix(model,test_loader,device)
+  np.save(outfile,cm)
+
+def test_epoch(model, device, data_loader, criterion):
+  model.eval()
+  test_loss = 0
+  correct = 0
   with torch.no_grad():
-    for batch_idx, sample in enumerate(data_loader):
-      (x, labels, nameFiles) = sample
-      embeddings, softmax = model(x)
-      embeddings = embeddings.cpu().numpy()
-      softmax = softmax.cpu().numpy()
-      for n, nameFile in enumerate(nameFiles):
-        np.save(os.path.join(dirEmbeddings, db, db_set, 'S' + str(labels[n]), nameFile + '.npy'), embeddings[n])
-        np.save(os.path.join(dirSoftmax, db, db_set, 'S' + str(labels[n]), nameFile + '.npy'), softmax[n])
+    for batch_idx, batch in enumerate(data_loader):
+      stfts = batch[0]
+      targets = torch.stack(batch[1])
+      targets = targets.to(device)
+      data = model(stfts)
+      data = data.to(device)
+      test_loss += criterion(data, targets).item() # sum up batch loss
+      pred = data.max(1)[1] # get the index of the max probability
+      correct += pred.eq(targets).sum().item()
+  #----UNA VEZ QUE TERMINA LA EPOCA DE ENTRENAMIENTO------------------------
+  test_loss /= len(data_loader.dataset)
+  test_accuracy = 100. * correct / len(data_loader.dataset)
+  print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+    test_loss, correct, len(data_loader.dataset), test_accuracy))
+  return test_accuracy, test_loss
 
-# db: LA or PA -> Embeddings being evaluated
-# args.is_la: True / False -> Model is trained with LA
-# db_set: training, development or test -> Dataset to evaluate
-def eval(protocol, db, db_set, embeddings_location, softmax_location, args, model, device, mp):
-  processes = []
 
-  df = pd.read_csv('/home2/alexgomezalanis/tdnn-asvspoof-2019/spoof/protocols/' + protocol, sep=' ')
-  numRows = len(df.index)
-  rows_p = int(numRows / args.num_processes)
 
-  for p in range(args.num_processes):
-    if (p == args.num_processes - 1):
-      df_p = df.iloc[p*rows_p:, :].reset_index().copy()
-    else:
-      df_p = df.iloc[p * rows_p : (p+1) * rows_p, :].reset_index().copy()
-    dataset = CNN_RNN_Dataset(
-      csv_file='',
-      root_dir='/home2/alexgomezalanis',
-      n_filts=args.num_filts,
-      n_frames=args.num_frames,
-      window=args.window_length,
-      shift=args.frame_shift,
-      dataset=db_set,
-      #is_evaluating_la=db == 'LA',    # Embeddings to evaluate
-      dataframe=df_p,
-      num_classes=args.num_classes)
+def generate_confusion_matrix(model,prediction_loader,device):
+  with torch.no_grad():
+    train_preds, all_labels = get_all_preds(model, prediction_loader,device)
+    pred = train_preds.max(1)[1] # get the index of the max probability
+    mc = confusion_matrix(all_labels.cpu(),pred.cpu())
+  return mc
+
+
+
+def get_all_preds(model, loader,device):
+  all_preds = torch.tensor([]).to(device)
+  all_labels = torch.tensor([],dtype=torch.long).to(device)
+  for batch in loader:
+    stfts = batch[0]
+    targets = torch.stack(batch[1])
+    targets = targets.to(device)
+    preds = model(stfts)
+    preds = preds.to(device)
+    all_preds = torch.cat((all_preds,preds),dim=0)
+    all_labels = torch.cat((all_labels,targets),dim=0)
+  return all_preds, all_labels
+ 
   
-    loader = DataLoader(dataset, batch_size=args.test_batch_size, shuffle=False,
-      num_workers=args.num_data_workers, collate_fn=collate)
-
-    process = mp.Process(target=test_epoch, args=(model, device, loader, db_set, embeddings_location, softmax_location, db))
-    process.start()
-    processes.append(process)
-  
-  for p in processes:
-    p.join()

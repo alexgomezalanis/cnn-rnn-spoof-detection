@@ -8,9 +8,9 @@ from torch.utils.data import Dataset, DataLoader
 #DataLoader: Envuelve un conjunto de datos y proporciona acceso a los datos subyacentes.
 from utils.get_stft import get_stft
 
-PA_CLASSES_TFM = {'limpio': 0,
+CLASSES = {'limpio': 0, 'clipping_05_09_percent': 0,
  'clipping_09_5_percent': 1,'clipping_5_10_percent': 2,'clipping_20_40_percent': 3, 'clipping_40_70_percent': 4,
- 'reverberacion_Lowhight': 5, 'reverberacion_MediumLow': 6, 'reverberacion_MediumHight': 7, 'reverberacion_Hight': 8,
+ 'reverberacion_LowLow': 5,'reverberacion_Lowhight': 5, 'reverberacion_MediumLow': 6, 'reverberacion_MediumHight': 7, 'reverberacion_Hight': 8,'reverberacion_Hight': 8,
  'noise_0_5db_SNR': 9,'noise_5_10db_SNR': 10,'noise_10_20db_SNR': 11 }
 
 LIST_CLASSES = ('limpio','clipping_09_5_percent','clipping_5_10_percent','clipping_20_40_percent','clipping_40_70_percent',
@@ -63,7 +63,7 @@ class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset
     
     label = self.wavfiles_frame['label'][idx]
     nameFile = self.wavfiles_frame['wav'][idx]
-    target = PA_CLASSES_TFM[label]
+    target = CLASSES[label]
 
     if self.dataset == 'train':
       file_dir = 'ConjuntoDatosEntrenamiento'
@@ -72,7 +72,7 @@ class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset
     elif self.dataset == 'ConjuntoPruebas':
       file_dir = 'ConjuntoPruebas'
     else:
-      file_dir = 'ConjuntoDatosEntrenamiento'
+      file_dir = 'ConjuntoDatosTest'
 
     file_path = os.path.join(self.root_dir, file_dir, nameFile)
     stft = get_stft(file_path, self.n_filts, self.n_frames, self.nperseg, self.noverlap, self.nfft)
