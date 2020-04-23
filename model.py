@@ -16,7 +16,7 @@ class CNN_RNN(nn.Module):
     self.bn2= nn.BatchNorm2d(16)
     self.gru = nn.GRUCell(input_size=16*28*14, hidden_size=8*28*14)
     self.dropoutRNN = nn.Dropout(p=0.5)
-    self.fc2 = nn.Linear(16*28*14,num_classes)
+    self.fc2 = nn.Linear(8*28*14,num_classes)
   
   def forward(self, x):
     locuciones = x
