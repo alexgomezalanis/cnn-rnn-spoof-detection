@@ -27,8 +27,8 @@ class CNN_RNN(nn.Module):
       for ventana in ventanas:
         ventana = ventana.unsqueeze(0)
         ventana = ventana.unsqueeze(0)
-        y = F.max_pool2d(self.bn1(F.leaky_relu(self.dropoutCNN(self.conv1(ventana)))), kernel_size=3, stride=3, padding=0)
-        y = F.max_pool2d(self.bn2(F.leaky_relu(self.dropoutCNN(self.conv2(y)))), kernel_size=3, stride=3, padding=0)
+        y = F.max_pool2d((F.leaky_relu(self.conv1(ventana))), kernel_size=3, stride=3, padding=0)
+        y = F.max_pool2d(F.leaky_relu(self.conv2(y)), kernel_size=3, stride=3, padding=0)
         y = y.squeeze(0)
         cnn.append(y)
       y = torch.stack(cnn)
