@@ -35,7 +35,7 @@ class CNN_RNN(nn.Module):
       y = y.flatten(start_dim=1)
       hx = torch.randn(1, 16*28*14).to(self.device)
       for i in range(y.shape[0]):
-        hx = self.dropoutRNN(self.gru(y[i].unsqueeze(0), hx))
+        hx = self.gru(y[i].unsqueeze(0), hx)
       y = self.fc2(hx)
       salida_lineal.append(y)
     samples = torch.stack(salida_lineal).squeeze(1)
