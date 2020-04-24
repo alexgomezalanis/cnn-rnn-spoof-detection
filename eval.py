@@ -17,7 +17,6 @@ rootPath = os.getcwd()
 def eval(args, model, optimizer, device, model_location):
   criterion_dev = nn.CrossEntropyLoss(reduction='sum')
 
-  test_protocol = 'ConjuntoDatosTest.csv'
   if args.is_googleColab:
     root_dir = '/content/drive/My Drive/database'
     csv_dir = '/content/cnn-rnn-spoof-detection/protocols'
@@ -26,7 +25,7 @@ def eval(args, model, optimizer, device, model_location):
     csv_dir = './protocols'
   
   test_dataset = CNN_RNN_Dataset(
-    csv_file=csv_dir + '/' + args.csv_test,
+    csv_file=csv_dir + '/' + args.csv_test + '.csv',
     root_dir=root_dir,
     n_filts=args.num_filts,
     n_frames=args.num_frames,
