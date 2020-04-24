@@ -8,6 +8,7 @@ def load_checkpoint(model, optimizer, filename):
   model = model
   losslogger=0
   accuracy=0
+  numEpochsNotImproving=0
   if os.path.isfile(filename):
     print("=> loading checkpoint '{}'".format(filename))
     checkpoint = torch.load(filename)
