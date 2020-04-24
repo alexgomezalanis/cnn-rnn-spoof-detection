@@ -40,7 +40,7 @@ def eval(args, model, optimizer, device, model_location):
   dev_accuracy, dev_loss = test_epoch(model, device, test_loader, criterion_dev)
 
   #-----validacion-----------
-  outfile = model_location + '/cmTest'
+  outfile = model_location + '/cmTest-' + args.csv_test
   cm = generate_confusion_matrix(model,test_loader,device)
   np.save(outfile,cm)
 
