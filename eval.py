@@ -26,7 +26,7 @@ def eval(args, model, optimizer, device, model_location):
     csv_dir = './protocols'
   
   test_dataset = CNN_RNN_Dataset(
-    csv_file=csv_dir + '/' + test_protocol,
+    csv_file=csv_dir + '/' + args.csv_test,
     root_dir=root_dir,
     n_filts=args.num_filts,
     n_frames=args.num_frames,

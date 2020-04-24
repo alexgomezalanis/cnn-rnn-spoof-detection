@@ -53,6 +53,10 @@ parser.add_argument('--num-classes', type=int, default=12, metavar='N',
                     help='Number of training classes')
 parser.add_argument('--load-epoch', type=int, default=-1,
                     help='Saved epoch to load and start training')
+parser.add_argument('--load-trainModel', type=str, default='2',
+                    help='path to load train model')
+parser.add_argument('--csv-test', type=str, default='limpio',
+                    help='path to load train model (default: ConjuntoDatosTest)')
 
 
 def main():
@@ -74,13 +78,21 @@ def main():
 
 
 
-  # Model and xvectors path
+  # create Model to save path
   dirEmbeddings = 'cnn_rnn_' + args.version + '_classes_' + str(args.num_classes) + '_model_'
   if not args.is_googleColab:
     rootPath = os.getcwd()
     model_location = os.path.join(rootPath, 'models')
   else:
     model_location = os.path.join('/content/drive/My Drive', 'models')
+  createDirectory(model_location)
+
+  #path modelSaves to load train model
+  if not args.is_googleColab:
+    rootPath = os.getcwd()
+    model_location = os.path.join(rootPath, 'modelsSave')
+  else:
+    model_location = os.path.join('/content/drive/My Drive', 'modelsSave')
   createDirectory(model_location)
 
   if args.train:
@@ -104,9 +116,10 @@ def main():
       model_location=model_location)
 
   if args.eval: #TEST!
-    print('Empieza el Test:\n')
-    path_model_location = os.path.join(model_location, 'best.pt')
+    path_model_location = os.path.join(model_location, args.load_trainModel)
+    path_model_location = os.path.join(path_model_location,'best.pt')
     model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
+    print('Empieza el Test:\n')
     eval(
       args=args,
       model=model,
