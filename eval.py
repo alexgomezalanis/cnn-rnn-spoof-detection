@@ -41,7 +41,7 @@ def eval(args, model, optimizer, device, model_location):
 
   #-----validacion-----------
   outfile = model_location + '/cmTest-' + args.csv_test
-  cm, labels_cm = generate_confusion_matrix(model,test_loader,device)
+  labels_cm, cm = generate_confusion_matrix(model,test_loader,device)
   np.save(outfile,cm)
   outfile = model_location + '/cmTest-' + args.csv_test + '-labels_cm'
   np.save(outfile,labels_cm)

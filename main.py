@@ -131,6 +131,9 @@ def main():
   
   if args.eval_separately: #testea cada clase del conjunto de datos de test por separado y saca su matriz de confusión
   #asi podemos ver especificamente que pasa con las clases que solo aparecen en test
+    path_model_location = os.path.join(model_location, args.load_trainModel)
+    path_model_location = os.path.join(path_model_location,'best.pt')
+    model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
 
     clasesAisladas = ('limpio', '05_09_percent',
       '09_5_percent','5_10_percent','10_20_percent','20_40_percent', '40_70_percent','70_90_percent',
@@ -138,6 +141,7 @@ def main():
       '0_5db_SNR','5_10db_SNR','10_20db_SNR')
 
     for clase in clasesAisladas:
+          print(clase)
           args.csv_test = clase
           eval(
             args=args,
@@ -145,10 +149,6 @@ def main():
             optimizer=optimizer,
             device=device,
             model_location=model_location)
-
-
-
-
     
 if __name__ == '__main__':
   main()
