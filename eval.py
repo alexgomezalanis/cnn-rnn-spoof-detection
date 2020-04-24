@@ -65,13 +65,19 @@ def test_epoch(model, device, data_loader, criterion):
     test_loss, correct, len(data_loader.dataset), test_accuracy))
   return test_accuracy, test_loss
 
+def get_labels_used_in_cm(all_labels,pred):
+  labels = set(all_labels)
+  pred = set(pred)
+  lista = set(labels + pred)
+  print(lista)
 
 
 def generate_confusion_matrix(model,prediction_loader,device):
   with torch.no_grad():
     train_preds, all_labels = get_all_preds(model, prediction_loader,device)
     pred = train_preds.max(1)[1] # get the index of the max probability
-    mc = confusion_matrix(all_labels.cpu(),pred.cpu(),[0,1,2,3,4,5,6,7,8,9,10,11])
+    mc = confusion_matrix(all_labels.cpu(),pred.cpu())
+    get_labels_used_in_cm(all_labels.cpu(),pred.cpu())
   return mc
 
 
