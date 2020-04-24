@@ -41,8 +41,10 @@ def eval(args, model, optimizer, device, model_location):
 
   #-----validacion-----------
   outfile = model_location + '/cmTest-' + args.csv_test
-  cm = generate_confusion_matrix(model,test_loader,device)
+  cm, labels_cm = generate_confusion_matrix(model,test_loader,device)
   np.save(outfile,cm)
+  outfile = model_location + '/cmTest-' + args.csv_test + '-labels_cm'
+  np.save(outfile,labels_cm)
 
 def test_epoch(model, device, data_loader, criterion):
   model.eval()
@@ -66,19 +68,16 @@ def test_epoch(model, device, data_loader, criterion):
   return test_accuracy, test_loss
 
 def get_labels_used_in_cm(all_labels,pred):
-  labels = set(all_labels)
-  pred = set(pred)
-  lista = set(labels + pred)
-  print(lista)
+  return np.unique(np.concatenate((np.unique(all_labels.numpy()),np.unique(pred.numpy()))))
 
 
 def generate_confusion_matrix(model,prediction_loader,device):
   with torch.no_grad():
     train_preds, all_labels = get_all_preds(model, prediction_loader,device)
     pred = train_preds.max(1)[1] # get the index of the max probability
-    mc = confusion_matrix(all_labels.cpu(),pred.cpu())
-    get_labels_used_in_cm(all_labels.cpu(),pred.cpu())
-  return mc
+    cm = confusion_matrix(all_labels.cpu(),pred.cpu())
+    labels_cm =get_labels_used_in_cm(all_labels.cpu(),pred.cpu())
+  return cm, labels_cm
 
 
 
