@@ -10,6 +10,9 @@ from utils.collate import collate
 import torch.nn as nn
 from sklearn.metrics import confusion_matrix
 
+LIST_CLASSES = ('limpio','clipping_09_5_percent','clipping_5_10_percent','clipping_20_40_percent','clipping_40_70_percent',
+                'reverberacion_Lowhight','reverberacion_MediumLow','reverberacion_MediumHight','reverberacion_Hight',
+                'noise_0_5db_SNR','noise_5_10db_SNR','noise_10_20db_SNR')
 
 rootPath = os.getcwd()
 
@@ -71,7 +74,7 @@ def generate_confusion_matrix(model,prediction_loader,device):
   with torch.no_grad():
     train_preds, all_labels = get_all_preds(model, prediction_loader,device)
     pred = train_preds.max(1)[1] # get the index of the max probability
-    mc = confusion_matrix(all_labels.cpu(),pred.cpu())
+    mc = confusion_matrix(all_labels.cpu(),pred.cpu(),LIST_CLASSES)
   return mc
 
 
