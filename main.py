@@ -78,18 +78,7 @@ def main():
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
-
-
-  # create Model to save path
-  dirEmbeddings = 'cnn_rnn_' + args.version + '_classes_' + str(args.num_classes) + '_model_'
-  if not args.is_googleColab:
-    rootPath = os.getcwd()
-    model_location = os.path.join(rootPath, 'models')
-  else:
-    model_location = os.path.join('/content/drive/My Drive', 'models')
-  createDirectory(model_location)
-
-  #path modelSaves to load train model
+  #path modelSaves to load test model
   if not args.is_googleColab:
     rootPath = os.getcwd()
     model_location = os.path.join(rootPath, 'modelsSave')
@@ -98,7 +87,14 @@ def main():
   createDirectory(model_location)
 
   if args.train:
-    print('Empieza el entrenamiento:\n')
+      # create dir to save epochs
+    if not args.is_googleColab:
+      rootPath = os.getcwd()
+      model_location = os.path.join(rootPath, 'models')
+    else:
+      model_location = os.path.join('/content/drive/My Drive', 'models')
+    createDirectory(model_location)
+    
     if (args.load_epoch != -1):
       path_model_location = os.path.join(model_location, 'epoch-' + str(args.load_epoch) + '.pt')
       model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
@@ -117,7 +113,7 @@ def main():
       device=device,
       model_location=model_location)
 
-  if args.eval: #para evaluar cada conjunto de datos aisladamente 
+  if args.eval: #para testear el conjunto de test de una sola vez
     path_model_location = os.path.join(model_location, args.load_trainModel)
     path_model_location = os.path.join(path_model_location,'best.pt')
     model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
