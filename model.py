@@ -9,12 +9,12 @@ class CNN_RNN(nn.Module):
     self.device = device
     self.n_frames = n_frames
     self.n_shift = n_shift
-    self.conv1 = nn.Conv2d(1, 16, kernel_size=9, stride=1, padding=2)
+    self.conv1 = nn.Conv2d(1, 32, kernel_size=9, stride=1, padding=2)
     self.bn1= nn.BatchNorm2d(16)
-    self.conv2 = nn.Conv2d(16, 32, kernel_size=4, stride=1, padding=2)
+    self.conv2 = nn.Conv2d(16, 64, kernel_size=4, stride=1, padding=2)
     self.dropoutCNN = nn.Dropout2d(p=0.3)
     self.bn2= nn.BatchNorm2d(16)
-    self.gru = nn.GRUCell(input_size=32*28*14, hidden_size=8*28*14)
+    self.gru = nn.GRUCell(input_size=32*28*14, hidden_size=28*14)
     self.dropoutRNN = nn.Dropout(p=0.5)
     self.fc2 = nn.Linear(8*28*14,num_classes)
   
