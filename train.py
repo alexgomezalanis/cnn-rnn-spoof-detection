@@ -38,7 +38,7 @@ def train(args, model, start_epoch, accuracy, numEpochsNotImproving, criterion, 
     n_frames=args.num_frames,
     window=args.window_length,
     shift=args.frame_shift,
-    dataset='training',
+    dataset='train',
     num_classes=args.num_classes)
 
   dev_dataset = CNN_RNN_Dataset(
