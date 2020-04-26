@@ -14,6 +14,21 @@ from sklearn.metrics import confusion_matrix
 rootPath = os.getcwd()
 
 
+mapping = {
+ 0: [0],
+ 1: [1,2],
+ 2: [2,1],
+ 3: [3],
+ 4: [4],
+ 5: [5],
+ 6: [6,7],
+ 7: [7,6],
+ 8: [8],
+ 9: [9],
+ 10: [10],
+ 11: [11] }
+
+
 def eval(args, model, optimizer, device, model_location):
   criterion_dev = nn.CrossEntropyLoss(reduction='sum')
 
@@ -52,7 +67,7 @@ def test_epoch(model, device, data_loader, criterion):
   model.eval()
   test_loss = 0
   correct = 0
-  all_preds = torch.tensor([]).to(device)
+  all_preds = torch.tensor([],dtype=torch.long).to(device)
   all_labels = torch.tensor([],dtype=torch.long).to(device)
   with torch.no_grad():
     for batch_idx, batch in enumerate(data_loader):
