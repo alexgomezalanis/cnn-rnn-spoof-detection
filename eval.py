@@ -37,11 +37,13 @@ def eval(args, model, optimizer, device, model_location):
   test_loader = DataLoader(test_dataset, batch_size=args.test_batch_size, shuffle=False,
     num_workers=args.num_data_workers, collate_fn=collate)
 
-  dev_accuracy, dev_loss = test_epoch(model, device, test_loader, criterion_dev)
+  dev_accuracy, dev_loss,all_preds, all_labels = test_epoch(model, device, test_loader, criterion_dev)
 
   #-----validacion-----------
   outfile = model_location + '/cmTest-' + args.csv_test
-  labels_cm, cm = generate_confusion_matrix(model,test_loader,device)
+  #labels_cm, cm = generate_confusion_matrix(model,test_loader,device)
+  cm = confusion_matrix(all_labels.cpu(),all_preds.cpu())
+  labels_cm =get_labels_used_in_cm(all_labels.cpu(),all_preds.cpu())
   np.save(outfile,cm)
   outfile = model_location + '/cmTest-' + args.csv_test + '-labels_cm'
   np.save(outfile,labels_cm)
@@ -50,6 +52,8 @@ def test_epoch(model, device, data_loader, criterion):
   model.eval()
   test_loss = 0
   correct = 0
+  all_preds = torch.tensor([]).to(device)
+  all_labels = torch.tensor([],dtype=torch.long).to(device)
   with torch.no_grad():
     for batch_idx, batch in enumerate(data_loader):
       stfts = batch[0]
@@ -60,12 +64,15 @@ def test_epoch(model, device, data_loader, criterion):
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(targets).sum().item()
+      all_preds = torch.cat((all_preds,pred),dim=0)
+      all_labels = torch.cat((all_labels,targets),dim=0)
   #----UNA VEZ QUE TERMINA LA EPOCA DE ENTRENAMIENTO------------------------
   test_loss /= len(data_loader.dataset)
   test_accuracy = 100. * correct / len(data_loader.dataset)
   print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(data_loader.dataset), test_accuracy))
-  return test_accuracy, test_loss
+
+  return test_accuracy, test_loss, all_preds, all_labels
 
 def get_labels_used_in_cm(all_labels,pred):
   return np.unique(np.concatenate((np.unique(all_labels.numpy()),np.unique(pred.numpy()))))
