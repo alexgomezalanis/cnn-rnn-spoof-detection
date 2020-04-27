@@ -14,21 +14,6 @@ from sklearn.metrics import confusion_matrix
 rootPath = os.getcwd()
 
 
-mapping = {
- 0: [0],
- 1: [1,2],
- 2: [2,1],
- 3: [3],
- 4: [4],
- 5: [5],
- 6: [6,7],
- 7: [7,6],
- 8: [8],
- 9: [9],
- 10: [10],
- 11: [11] }
-
-
 def eval(args, model, optimizer, device, model_location):
   criterion_dev = nn.CrossEntropyLoss(reduction='sum')
 
@@ -54,14 +39,22 @@ def eval(args, model, optimizer, device, model_location):
 
   dev_accuracy, dev_loss,all_preds, all_labels = test_epoch(model, device, test_loader, criterion_dev)
 
-  #-----validacion-----------
+  #-----cm test and asociate labels-----------
   outfile = model_location + '/cmTest-' + args.csv_test
-  #labels_cm, cm = generate_confusion_matrix(model,test_loader,device)
   cm = confusion_matrix(all_labels.cpu(),all_preds.cpu())
   labels_cm =get_labels_used_in_cm(all_labels.cpu(),all_preds.cpu())
   np.save(outfile,cm)
   outfile = model_location + '/cmTest-' + args.csv_test + '-labels_cm'
   np.save(outfile,labels_cm)
+
+  #mapeo a nuevas 10 clases --> imprimimos el acuraccy y guardamos la nueva matriz de confusion
+  outfile = model_location + '/cmTestMapeo-' + args.csv_test
+  acurracy_new,all_labels_n,all_preds_n = get_new_classes(all_labels,all_preds,device)
+  cm = confusion_matrix(all_labels_n.cpu(),all_preds_n.cpu())
+  labels_cm =get_labels_used_in_cm(all_labels_n.cpu(),all_preds_n.cpu())
+  np.save(outfile,cm)
+  outfile = model_location + '/cmTestMapeo-' + args.csv_test + '-labels_cm'
+  print('NEW ACCURACY: ',acurracy_new)
 
 def test_epoch(model, device, data_loader, criterion):
   model.eval()
@@ -93,27 +86,43 @@ def get_labels_used_in_cm(all_labels,pred):
   return np.unique(np.concatenate((np.unique(all_labels.numpy()),np.unique(pred.numpy()))))
 
 
-def generate_confusion_matrix(model,prediction_loader,device):
-  with torch.no_grad():
-    train_preds, all_labels = get_all_preds(model, prediction_loader,device)
-    pred = train_preds.max(1)[1] # get the index of the max probability
-    cm = confusion_matrix(all_labels.cpu(),pred.cpu())
-    labels_cm =get_labels_used_in_cm(all_labels.cpu(),pred.cpu())
-  return cm, labels_cm
+def get_new_classes(all_labels,all_preds,device):
 
+  mapping = {
+  0: [0],
+  1: [1,2],
+  2: [2,1],
+  3: [3],
+  4: [4],
+  5: [5],
+  6: [6,7],
+  7: [7,6],
+  8: [8],
+  9: [9],
+  10: [10],
+  11: [11] }
 
+  newClasses = { 0:0, 1:1, 2:1, 3:2, 4:3,
+                5:4,6:5,7:5,8:6,
+                9:7,10:8,11:9 }
 
-def get_all_preds(model, loader,device):
-  all_preds = torch.tensor([]).to(device)
-  all_labels = torch.tensor([],dtype=torch.long).to(device)
-  for batch in loader:
-    stfts = batch[0]
-    targets = torch.stack(batch[1])
-    targets = targets.to(device)
-    preds = model(stfts)
-    preds = preds.to(device)
-    all_preds = torch.cat((all_preds,preds),dim=0)
-    all_labels = torch.cat((all_labels,targets),dim=0)
-  return all_preds, all_labels
- 
-  
+  # xx = { 'limpio':0,
+  #       'clippingBajo':1, 'clippingMedio':2, 'clippingAlto':3,
+  #       'reverberacionBaja':4, 'reverberacionMedia':5, 'reverberacionAlta':6,
+  #       'SNRalto':7,'SNRmedio':8,'SNRbajo':9 }
+
+  new_labels = []
+  new_preds = []
+  correct = 0
+  size = all_labels.size()[0]
+  size2 = all_preds.size()[0]
+  for i, label in enumerate(all_labels):
+    label = label.item()
+    pred = all_preds[i].item()
+    if pred in mapping[label]: 
+      correct += 1
+    new_labels.append(newClasses[label])
+    new_preds.append(newClasses[pred])
+  #calculamos el nuevo accuracy
+  accuracy = correct/size
+  return accuracy, torch.tensor(new_labels).to(device),torch.tensor(new_preds).to(device)

@@ -15,38 +15,55 @@ from train import generate_confusion_matrix
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 
+def get_new_classes(all_labels,all_preds,device):
 
-train_protocol = 'ConjuntoDatosEntrenamiento.csv'
-dev_protocol = 'ConjuntoDatosValidacion.csv'
-pruebas_protocol = 'ConjuntoPruebas.csv'
-root_dir = './database'
+  mapping = {
+  0: [0],
+  1: [1,2],
+  2: [2,1],
+  3: [3],
+  4: [4],
+  5: [5],
+  6: [6,7],
+  7: [7,6],
+  8: [8],
+  9: [9],
+  10: [10],
+  11: [11] }
 
-print('Programa de pruebas:')
-n_frames = 128
-n_shift = 32
-num_filts = 256
-num_frames = 32
-window_length = 0.025
-frame_shift = 0.01
-num_classes = 12
-device = torch.device("cpu")
+  newClasses = { 0:0, 1:1, 2:1, 3:2, 4:3,
+                5:4,6:5,7:5,8:6,
+                9:7,10:8,11:9 }
 
-train_dataset = CNN_RNN_Dataset(
-csv_file='./protocols/' + pruebas_protocol,
-root_dir=root_dir,
-n_filts=num_filts,
-n_frames=num_frames, #128
-window=window_length,
-shift=frame_shift, #32
-dataset='ConjuntoPruebas',
-num_classes=num_classes)
+  # xx = { 'limpio':0,
+  #       'clippingBajo':1, 'clippingMedio':2, 'clippingAlto':3,
+  #       'reverberacionBaja':4, 'reverberacionMedia':5, 'reverberacionAlta':6,
+  #       'SNRalto':7,'SNRmedio':8,'SNRbajo':9 }
 
-model = CNN_RNN(num_classes,n_frames,n_shift,device)
-    
-
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True,
-num_workers=0, collate_fn=collate)
-
-muestra = next(iter(train_loader))
+  new_labels = []
+  new_preds = []
+  correct = 0
+  size = all_labels.size()[0]
+  size2 = all_preds.size()[0]
+  for i, label in enumerate(all_labels):
+    label = label.item()
+    pred = all_preds[i].item()
+    if pred in mapping[label]: 
+      correct += 1
+    new_labels.append(newClasses[label])
+    new_preds.append(newClasses[pred])
+  #calculamos el nuevo accuracy
+  accuracy = correct/size
+  return accuracy, torch.tensor(new_labels).to(device),torch.tensor(new_preds).to(device)
 
 
+
+
+labels = torch.tensor([0,1,2,3,4,5,6,7,8,9,10,11])
+pred = torch.tensor([1,2,3,4,5,6,7,8,9,10,11,11])
+
+a,n_labels,n_preds = get_new_classes(labels,pred,torch.device('cpu'))
+
+print('acurracy:',a)
+print('labels:',n_labels)
+print('preds:',n_preds)
