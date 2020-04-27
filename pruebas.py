@@ -40,6 +40,9 @@ def get_new_classes(all_labels,all_preds,device):
   #       'reverberacionBaja':4, 'reverberacionMedia':5, 'reverberacionAlta':6,
   #       'SNRalto':7,'SNRmedio':8,'SNRbajo':9 }
 
+  # LIST_CLASSES = ('limpio','clipping_09_5_percent','clipping_5_10_percent','clipping_20_40_percent','clipping_40_70_percent',
+  #               'reverberacion_Lowhight','reverberacion_MediumLow','reverberacion_MediumHight','reverberacion_Hight',
+  #               'noise_0_5db_SNR','noise_5_10db_SNR','noise_10_20db_SNR')
   new_labels = []
   new_preds = []
   correct = 0
