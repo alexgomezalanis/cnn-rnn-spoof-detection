@@ -24,7 +24,7 @@ def eval(args, model, optimizer, device, model_location):
     root_dir = './database'
     csv_dir = './protocols'
 
-  if args.test_mezcla:
+  if args.eval_mezcla:
     dataset = 'mezcla'
   else:
     dataset = 'test'

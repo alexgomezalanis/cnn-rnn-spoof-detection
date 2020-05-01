@@ -86,7 +86,6 @@ def main():
     model_location = os.path.join(rootPath, 'modelsSave')
   else:
     model_location = os.path.join('/content/drive/My Drive', 'modelsSave')
-  createDirectory(model_location)
 
   if args.train:
       # create dir to save epochs

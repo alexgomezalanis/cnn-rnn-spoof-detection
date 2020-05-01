@@ -12,10 +12,10 @@ class CNN_RNN(nn.Module):
     self.conv1 = nn.Conv2d(1, 32, kernel_size=9, stride=1, padding=2)
     #self.bn1= nn.BatchNorm2d(16)
     self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=1, padding=2)
-    #self.dropoutCNN = nn.Dropout2d(p=0.2)
+    self.dropoutCNN = nn.Dropout2d(p=0.2)
     #self.bn2= nn.BatchNorm2d(16)
     self.gru = nn.GRUCell(input_size=64*28*14, hidden_size=4*28*14)
-    #self.dropoutRNN = nn.Dropout(p=0.3)
+    self.dropoutRNN = nn.Dropout(p=0.3)
     self.fc2 = nn.Linear(4*28*14,num_classes)
   
   def forward(self, x):
