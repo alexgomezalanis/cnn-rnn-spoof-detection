@@ -23,6 +23,11 @@ def eval(args, model, optimizer, device, model_location):
   else:
     root_dir = './database'
     csv_dir = './protocols'
+
+  if args.test_mezcla:
+    dataset = 'mezcla'
+  else:
+    dataset = 'test'
   
   test_dataset = CNN_RNN_Dataset(
     csv_file=csv_dir + '/' + args.csv_test + '.csv',
@@ -31,7 +36,7 @@ def eval(args, model, optimizer, device, model_location):
     n_frames=args.num_frames,
     window=args.window_length,
     shift=args.frame_shift,
-    dataset='test',
+    dataset=dataset,
     num_classes=args.num_classes)
 
   test_loader = DataLoader(test_dataset, batch_size=args.test_batch_size, shuffle=False,

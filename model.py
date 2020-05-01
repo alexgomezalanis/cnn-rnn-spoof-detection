@@ -12,12 +12,11 @@ class CNN_RNN(nn.Module):
     self.conv1 = nn.Conv2d(1, 32, kernel_size=9, stride=1, padding=2)
     #self.bn1= nn.BatchNorm2d(16)
     self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=1, padding=2)
-    self.convx = nn.Conv2d(32, 32, kernel_size=9, stride=1, padding=2)
-    self.dropoutCNN = nn.Dropout2d(p=0.2)
+    #self.dropoutCNN = nn.Dropout2d(p=0.2)
     #self.bn2= nn.BatchNorm2d(16)
-    self.gru = nn.GRUCell(input_size=32*9*4, hidden_size=8*9*4)
-    self.dropoutRNN = nn.Dropout(p=0.3)
-    self.fc2 = nn.Linear(8*10*5,num_classes)
+    self.gru = nn.GRUCell(input_size=64*28*14, hidden_size=4*28*14)
+    #self.dropoutRNN = nn.Dropout(p=0.3)
+    self.fc2 = nn.Linear(4*28*14,num_classes)
   
   def forward(self, x):
     locuciones = x
@@ -28,18 +27,13 @@ class CNN_RNN(nn.Module):
       for ventana in ventanas:
         ventana = ventana.unsqueeze(0)
         ventana = ventana.unsqueeze(0)
-        y = F.max_pool2d((F.leaky_relu(self.dropoutCNN(self.conv1(ventana)))), kernel_size=3, stride=3, padding=0)
-        print('1 cnn',y.shape())
-        y = F.max_pool2d(F.leaky_relu(self.dropoutCNN(self.conv2(y))), kernel_size=3, stride=3, padding=0)
-        print('2 cnn',y.shape())
-        y = F.max_pool2d((F.leaky_relu(self.dropoutCNN(self.convx(y)))), kernel_size=3, stride=1, padding=0)
-        print('3º cnn',y.shape())
+        y = F.max_pool2d((F.leaky_relu(self.conv1(ventana))), kernel_size=3, stride=3, padding=0)
+        y = F.max_pool2d(F.leaky_relu(self.conv2(y)), kernel_size=3, stride=3, padding=0)
         y = y.squeeze(0)
         cnn.append(y)
       y = torch.stack(cnn)
       y = y.flatten(start_dim=1)
-      y = self.dropoutRNN(y)
-      hx = torch.randn(1, 8*10*5).to(self.device)
+      hx = torch.randn(1, 4*28*14).to(self.device)
       for i in range(y.shape[0]):
         hx = self.gru(y[i].unsqueeze(0), hx)
       y = self.fc2(hx)

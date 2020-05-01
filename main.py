@@ -49,6 +49,8 @@ parser.add_argument('--eval', default=False, type=lambda x: (str(x).lower() in [
                     help='Whether to eval the model')
 parser.add_argument('--eval-separately', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='evalua todas las clases del conjunto de test por separado')
+parser.add_argument('--eval-mezcla', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+                    help='evalua los conjuntos de datos con distorsiones mezcladas')
 parser.add_argument('--version', type=str, default='v3',
                     help='Version to save the model')
 parser.add_argument('--num-classes', type=int, default=12, metavar='N',
@@ -57,7 +59,7 @@ parser.add_argument('--load-epoch', type=int, default=-1,
                     help='Saved epoch to load and start training')
 parser.add_argument('--load-trainModel', type=str, default='3',
                     help='path to load train model')
-parser.add_argument('--csv-test', type=str, default='ConjuntoDatosTest',
+parser.add_argument('--csv-test', type=str, default='reverAndClipping',
                     help='path to load train model (default: ConjuntoDatosTest)')
 
 
@@ -113,7 +115,8 @@ def main():
       device=device,
       model_location=model_location)
 
-  if args.eval: #para testear el conjunto de test de una sola vez
+  if args.eval: #ConjuntoDatosTest
+    #del conjunto de datos se puede seleccionar todo al completo o cada clase por separado
     path_model_location = os.path.join(model_location, args.load_trainModel)
     path_model_location = os.path.join(path_model_location,'best.pt')
     model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
@@ -125,8 +128,8 @@ def main():
       device=device,
       model_location=model_location)
   
-  if args.eval_separately: #testea cada clase del conjunto de datos de test por separado y saca su matriz de confusión
-  #asi podemos ver especificamente que pasa con las clases que solo aparecen en test
+  if args.eval_separately:
+    #testea cada clase del conjunto de test por separado
     path_model_location = os.path.join(model_location, args.load_trainModel)
     path_model_location = os.path.join(path_model_location,'best.pt')
     model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
@@ -145,6 +148,17 @@ def main():
             optimizer=optimizer,
             device=device,
             model_location=model_location)
-    
+
+  if args.eval_mezcla: #accede a las bases de datos del conjunto de datos de mezcla
+    path_model_location = os.path.join(model_location, args.load_trainModel)
+    path_model_location = os.path.join(path_model_location,'best.pt')
+    model, optimizer, start_epoch, losslogger, accuracy, numEpochsNotImproving = load_checkpoint(model, optimizer, path_model_location)
+    eval(
+      args=args,
+      model=model,
+      optimizer=optimizer,
+      device=device,
+      model_location=model_location)
+  
 if __name__ == '__main__':
   main()
