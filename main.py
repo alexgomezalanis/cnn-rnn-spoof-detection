@@ -59,7 +59,7 @@ parser.add_argument('--load-epoch', type=int, default=-1,
                     help='Saved epoch to load and start training')
 parser.add_argument('--load-trainModel', type=str, default='3',
                     help='path to load train model')
-parser.add_argument('--csv-test', type=str, default='reverAndClipping',
+parser.add_argument('--csv-test', type=str, default='noiseAndRever',
                     help='path to load train model (default: ConjuntoDatosTest)')
 
 
