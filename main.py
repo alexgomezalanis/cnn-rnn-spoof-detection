@@ -43,7 +43,7 @@ parser.add_argument('--window-length', type=float, default=0.025,
                     help='Window Length to compute STFT (s)')
 parser.add_argument('--frame-shift', type=float, default=0.010,
                     help='Frame Shift to compute STFT (s)')
-parser.add_argument('--train', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--train', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to train the model')
 parser.add_argument('--eval', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to eval the model')
