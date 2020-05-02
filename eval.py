@@ -44,6 +44,10 @@ def eval(args, model, optimizer, device, model_location):
 
   dev_accuracy, dev_loss,all_preds, all_labels = test_epoch(model, device, test_loader, criterion_dev)
 
+  #------calculamos el accuracy ponderado del conjunto de test seleccionado-----
+  accuracy_ponderado = calculo_accuracy_ponderado(all_labels,all_preds)
+  print('Accuracy Ponderado: ',accuracy_ponderado)
+
   #-----cm test and asociate labels-----------
   print('calculando la matriz de confusion del conjunto de test... \n')
   outfile = model_location + '/cmTest-' + args.csv_test
@@ -135,3 +139,39 @@ def get_new_classes(all_labels,all_preds,device):
   #calculamos el nuevo accuracy
   accuracy = correct/size
   return accuracy, torch.tensor(new_labels).to(device),torch.tensor(new_preds).to(device)
+
+
+
+def calculo_accuracy_ponderado(all_labels,all_preds):
+    mapping = {
+      0: [0],
+      1: [1,2],
+      2: [2,1,3],
+      3: [3,2,4],
+      4: [4,3],
+      5: [5,6],
+      6: [6,5,7],
+      7: [7,6,8],
+      8: [8,7],
+      9: [9,10],
+      10: [10,9,11],
+      11: [11,10] }
+
+    
+    # LIST_CLASSES = ('0limpio','1clipping_09_5_percent','2clipping_5_10_percent','3clipping_20_40_percent','4clipping_40_70_percent',
+    #                 '5reverberacion_Lowhight','6reverberacion_MediumLow','7reverberacion_MediumHight','8reverberacion_Hight',
+    #                 '9noise_0_5db_SNR','10noise_5_10db_SNR','11noise_10_20db_SNR')
+  
+    correct = 0
+    size_allLabels = all_labels.size()[0]
+    for i, label in enumerate(all_labels):
+      label = label.item()
+      pred = all_preds[i].item()
+      if pred in mapping[label]: 
+        if mapping[label].index(pred) == 0: #es la clase 100%
+          correct += 1
+        else: #es una clase adjacente
+          correct +=0.5
+    #calculamos el nuevo accuracy
+    accuracy_ponderado = correct/size_allLabels
+    return accuracy_ponderado
