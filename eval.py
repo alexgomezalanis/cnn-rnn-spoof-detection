@@ -27,7 +27,7 @@ def eval(args, model, optimizer, device, model_location):
   if args.eval_mezcla:
     dataset = 'mezcla'
   else:
-    dataset = 'test'
+    dataset = 'train'
   
   test_dataset = CNN_RNN_Dataset(
     csv_file=csv_dir + '/' + args.csv_test + '.csv',
@@ -144,8 +144,8 @@ def get_new_classes(all_labels,all_preds,device):
 
 def calculo_accuracy_ponderado(all_labels,all_preds):
     mapping = {
-      0: [0],
-      1: [1,2],
+      0: [0,1],
+      1: [1,0,2],
       2: [2,1,3],
       3: [3,2,4],
       4: [4,3],
