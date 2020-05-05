@@ -9,6 +9,7 @@ from dataset import CNN_RNN_Dataset
 from utils.collate import collate
 import torch.nn as nn
 from sklearn.metrics import confusion_matrix
+import torch.nn.functional as F
 
 
 rootPath = os.getcwd()
@@ -80,8 +81,13 @@ def test_epoch(model, device, data_loader, criterion):
       stfts = batch[0]
       targets = torch.stack(batch[1])
       targets = targets.to(device)
+      names = torch.stack(batch[2])
+      names = names.to(device)
       data = model(stfts)
       data = data.to(device)
+      y = F.softmax(data,dim=1)
+      print(y)
+      print(names)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(targets).sum().item()
