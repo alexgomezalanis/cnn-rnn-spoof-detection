@@ -85,8 +85,8 @@ def test_epoch(model, device, data_loader, criterion):
       names = names.to(device)
       data = model(stfts)
       data = data.to(device)
-      y = F.softmax(data,dim=1)
-      print(y)
+      mmse = MMSE(data,device)
+      print(mmse)
       print(names)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
@@ -181,3 +181,18 @@ def calculo_accuracy_ponderado(all_labels,all_preds):
     #calculamos el nuevo accuracy
     accuracy_ponderado = correct/size_allLabels
     return accuracy_ponderado
+
+
+
+def MMSE(data,device):
+  prob_locuciones = F.softmax(data,dim=1)
+  numero_locuciones = prob_locuciones.shape()[0]
+
+  resultados = []
+  for i in range(numero_locuciones):
+    clipping = prob_locuciones[i][1] + prob_locuciones[i][2] + prob_locuciones[i][3] + prob_locuciones[i][4]
+    rever = prob_locuciones[i][5] + prob_locuciones[i][6] + prob_locuciones[i][7] + prob_locuciones[i][8]
+    noise = prob_locuciones[i][9] + prob_locuciones[i][10] + prob_locuciones[i][11]
+    resultado = [clipping,rever,noise]
+    resultados.append(resultado)
+  return resultados
