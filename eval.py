@@ -26,7 +26,7 @@ def eval(args, model, optimizer, device, model_location):
     csv_dir = './protocols'
 
   if args.eval_mezcla:
-    dataset = 'mezcla'
+    dataset = 'audiosReales'
   else:
     dataset = 'train'
   
