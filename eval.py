@@ -81,11 +81,11 @@ def test_epoch(model, device, data_loader, criterion):
       stfts = batch[0]
       targets = torch.stack(batch[1])
       targets = targets.to(device)
-      names = torch.stack(batch[2])
-      names = names.to(device)
+      names = batch[2]
       data = model(stfts)
       data = data.to(device)
       mmse = MMSE(data,device)
+      print(F.softmax(data,dim=1))
       print(mmse)
       print(names)
       test_loss += criterion(data, targets).item() # sum up batch loss
@@ -195,4 +195,4 @@ def MMSE(data,device):
     noise = prob_locuciones[i][9] + prob_locuciones[i][10] + prob_locuciones[i][11]
     resultado = [clipping,rever,noise]
     resultados.append(resultado)
-  return resultados
+  return torch.tensor(resultados)
