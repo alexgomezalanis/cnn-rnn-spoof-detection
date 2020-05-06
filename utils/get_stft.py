@@ -4,7 +4,7 @@ import statistics as st
 import math
 from scipy import signal
 import matplotlib.pyplot as plt
-import sounddevice as sd
+
 
 
 def plot_stft(t,f,file_path, Sxx,vmin=0):

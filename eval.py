@@ -193,6 +193,6 @@ def MMSE(data,device):
     clipping = prob_locuciones[i][1] + prob_locuciones[i][2] + prob_locuciones[i][3] + prob_locuciones[i][4]
     rever = prob_locuciones[i][5] + prob_locuciones[i][6] + prob_locuciones[i][7] + prob_locuciones[i][8]
     noise = prob_locuciones[i][9] + prob_locuciones[i][10] + prob_locuciones[i][11]
-    resultado = [clipping,rever,noise]
+    resultado = [prob_locuciones[i][0],clipping,rever,noise]
     resultados.append(resultado)
   return torch.tensor(resultados)
