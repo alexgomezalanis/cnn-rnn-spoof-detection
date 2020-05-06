@@ -186,7 +186,7 @@ def calculo_accuracy_ponderado(all_labels,all_preds):
 
 def MMSE(data,device):
   prob_locuciones = F.softmax(data,dim=1)
-  numero_locuciones = prob_locuciones.shape()[0]
+  numero_locuciones = prob_locuciones.shape[0]
 
   resultados = []
   for i in range(numero_locuciones):
