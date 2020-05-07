@@ -28,7 +28,7 @@ def eval(args, model, optimizer, device, model_location):
   if args.eval_mezcla:
     dataset = 'audiosReales'
   else:
-    dataset = 'train'
+    dataset = 'ingles'
   
   test_dataset = CNN_RNN_Dataset(
     csv_file=csv_dir + '/' + args.csv_test + '.csv',
@@ -58,17 +58,17 @@ def eval(args, model, optimizer, device, model_location):
   outfile = model_location + '/cmTest-' + args.csv_test + '-labels_cm'
   np.save(outfile,labels_cm)
 
-  if args.eval: #solo la calculamos cuando tengamos una clase en solitario
-    #mapeo a nuevas 10 clases --> imprimimos el accuracy y guardamos la nueva matriz de confusion
-    print('calculando la matriz de confusion del conjunto de test para las nuevas clase ... \n')
-    acurracy_new,all_labels_n,all_preds_n = get_new_classes(all_labels,all_preds,device)
-    cm = confusion_matrix(all_labels_n.cpu(),all_preds_n.cpu())
-    labels_cm =get_labels_used_in_cm(all_labels_n.cpu(),all_preds_n.cpu())
-    outfile = model_location + '/cmTestMapeo-' + args.csv_test
-    np.save(outfile,cm)
-    outfile = model_location + '/cmTestMapeo-' + args.csv_test + '-labels_cm'
-    np.save(outfile,labels_cm)
-    print('NEW ACCURACY: ',acurracy_new)
+  # if args.eval: #solo la calculamos cuando tengamos una clase en solitario
+  #   #mapeo a nuevas 10 clases --> imprimimos el accuracy y guardamos la nueva matriz de confusion
+  #   print('calculando la matriz de confusion del conjunto de test para las nuevas clase ... \n')
+  #   acurracy_new,all_labels_n,all_preds_n = get_new_classes(all_labels,all_preds,device)
+  #   cm = confusion_matrix(all_labels_n.cpu(),all_preds_n.cpu())
+  #   labels_cm =get_labels_used_in_cm(all_labels_n.cpu(),all_preds_n.cpu())
+  #   outfile = model_location + '/cmTestMapeo-' + args.csv_test
+  #   np.save(outfile,cm)
+  #   outfile = model_location + '/cmTestMapeo-' + args.csv_test + '-labels_cm'
+  #   np.save(outfile,labels_cm)
+  #   print('NEW ACCURACY: ',acurracy_new)
 
 def test_epoch(model, device, data_loader, criterion):
   model.eval()
@@ -84,10 +84,7 @@ def test_epoch(model, device, data_loader, criterion):
       names = batch[2]
       data = model(stfts)
       data = data.to(device)
-      mmse = MMSE(data,device)
-      print(F.softmax(data,dim=1))
-      print(mmse)
-      print(names)
+      #mmse = MMSE(data,device)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(targets).sum().item()
