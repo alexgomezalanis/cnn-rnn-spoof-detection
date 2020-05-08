@@ -28,7 +28,7 @@ def eval(args, model, optimizer, device, model_location):
   if args.eval_mezcla:
     dataset = 'audiosReales'
   else:
-    dataset = 'train'
+    dataset = 'ingles'
   
   test_dataset = CNN_RNN_Dataset(
     csv_file=csv_dir + '/' + args.csv_test + '.csv',
@@ -84,9 +84,9 @@ def test_epoch(model, device, data_loader, criterion):
       names = batch[2]
       data = model(stfts)
       data = data.to(device)
-      mmse = MMSE(data,device)
-      print(data)
-      print(mmse)
+      # mmse = MMSE(data,device)
+      # print(data)
+      # print(mmse)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(targets).sum().item()
@@ -192,6 +192,7 @@ def MMSE(data,device):
     clipping = prob_locuciones[i][1] + prob_locuciones[i][2] + prob_locuciones[i][3] + prob_locuciones[i][4]
     rever = prob_locuciones[i][5] + prob_locuciones[i][6] + prob_locuciones[i][7] + prob_locuciones[i][8]
     noise = prob_locuciones[i][9] + prob_locuciones[i][10] + prob_locuciones[i][11]
-    resultado = [prob_locuciones[i][0],clipping,rever,noise]
+    limpio = prob_locuciones[i][0]
+    resultado = [limpio,clipping,rever,noise]
     resultados.append(resultado)
   return torch.tensor(resultados)
