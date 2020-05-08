@@ -26,9 +26,9 @@ def eval(args, model, optimizer, device, model_location):
     csv_dir = './protocols'
 
   if args.eval_mezcla:
-    dataset = 'audiosReales'
+    dataset = 'mezcla'
   else:
-    dataset = 'train'
+    dataset = 'test'
   
   test_dataset = CNN_RNN_Dataset(
     csv_file=csv_dir + '/' + args.csv_test + '.csv',
