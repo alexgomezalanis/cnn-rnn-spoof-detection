@@ -8,6 +8,7 @@ import torch.multiprocessing as mp
 from utils.checkpoint import load_checkpoint
 from utils.create_directory import createDirectory
 from model import CNN_RNN
+from modelCNN import CNN
 from eval import eval
 from train import train
 
@@ -43,13 +44,13 @@ parser.add_argument('--window-length', type=float, default=0.025,
                     help='Window Length to compute STFT (s)')
 parser.add_argument('--frame-shift', type=float, default=0.010,
                     help='Frame Shift to compute STFT (s)')
-parser.add_argument('--train', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--train', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to train the model')
 parser.add_argument('--eval', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to eval the model')
 parser.add_argument('--eval-separately', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='evalua todas las clases del conjunto de test por separado')
-parser.add_argument('--eval-mezcla', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--eval-mezcla', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='evalua los conjuntos de datos con distorsiones mezcladas')
 parser.add_argument('--version', type=str, default='v3',
                     help='Version to save the model')
@@ -72,11 +73,9 @@ def main():
   dataloader_kwargs = {'pin_memory': True} if use_cuda else {}
 
   torch.manual_seed(args.seed)
-  # Los valores aleatorios seguirán siendo "aleatorios" pero en un orden definido.
-  # Es decir, si reinicia su script, se crearán los mismos números aleatorios.
 
   mp.set_start_method('spawn')
-  model = CNN_RNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
+  model = CNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
