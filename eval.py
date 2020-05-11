@@ -58,18 +58,6 @@ def eval(args, model, optimizer, device, model_location):
   outfile = model_location + '/cmTest-' + args.csv_test + '-labels_cm'
   np.save(outfile,labels_cm)
 
-  # if args.eval: #solo la calculamos cuando tengamos una clase en solitario
-  #   #mapeo a nuevas 10 clases --> imprimimos el accuracy y guardamos la nueva matriz de confusion
-  #   print('calculando la matriz de confusion del conjunto de test para las nuevas clase ... \n')
-  #   acurracy_new,all_labels_n,all_preds_n = get_new_classes(all_labels,all_preds,device)
-  #   cm = confusion_matrix(all_labels_n.cpu(),all_preds_n.cpu())
-  #   labels_cm =get_labels_used_in_cm(all_labels_n.cpu(),all_preds_n.cpu())
-  #   outfile = model_location + '/cmTestMapeo-' + args.csv_test
-  #   np.save(outfile,cm)
-  #   outfile = model_location + '/cmTestMapeo-' + args.csv_test + '-labels_cm'
-  #   np.save(outfile,labels_cm)
-  #   print('NEW ACCURACY: ',acurracy_new)
-
 def test_epoch(model, device, data_loader, criterion):
   model.eval()
   test_loss = 0
@@ -85,8 +73,6 @@ def test_epoch(model, device, data_loader, criterion):
       data = model(stfts)
       data = data.to(device)
       pSumadas,estimacionMMSE= MMSE(data,device)
-      print(estimacionMMSE)
-      print(pSumadas)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(targets).sum().item()
