@@ -9,8 +9,8 @@ class DNN(nn.Module):
     self.device = device
     self.n_frames = n_frames
     self.n_shift = n_shift
-    self.fc1 = nn.Linear(1,1024)
-    self.fc2 = nn.Linear(1,1024)
+    self.fc1 = nn.Linear(256*128,1024)
+    self.fc2 = nn.Linear(1024,1024)
     self.fc3 = nn.Linear(1024,1024)
     self.fc4 = nn.Linear(1024,num_classes)
   
@@ -21,7 +21,9 @@ class DNN(nn.Module):
       ventanas = self.calcular_ventanas_espectrales(locucion)
       salida_por_ventana = []
       for ventana in ventanas:
+        print('ventana',ventana.shape)
         ventana = ventana.flatten(start_dim=0)
+        print('ventanaflattten',ventana.shape)
         y = self.fc1(F.leaky_relu(ventana))
         print('salida fc1:',y.shape)
         y = self.fc2(F.leaky_relu(y))
