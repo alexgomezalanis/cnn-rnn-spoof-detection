@@ -9,12 +9,13 @@ from utils.checkpoint import load_checkpoint
 from utils.create_directory import createDirectory
 from model import CNN_RNN
 from modelCNN import CNN
+from modelDNN import DNN
 from eval import eval
 from train import train
 
 # Training settings
 parser = argparse.ArgumentParser(description='CNN RNN audio distortions')
-parser.add_argument('--is-googleColab', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--is-googleColab', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='True: train with google Colab// False: train in local')
 parser.add_argument('--batch-size', type=int, default=50, metavar='N',
                     help='input batch size for training (default: 100)')
@@ -44,9 +45,9 @@ parser.add_argument('--window-length', type=float, default=0.025,
                     help='Window Length to compute STFT (s)')
 parser.add_argument('--frame-shift', type=float, default=0.010,
                     help='Frame Shift to compute STFT (s)')
-parser.add_argument('--train', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--train', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to train the model')
-parser.add_argument('--eval', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--eval', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to eval the model')
 parser.add_argument('--eval-separately', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='evalua todas las clases del conjunto de test por separado')
@@ -75,7 +76,7 @@ def main():
   torch.manual_seed(args.seed)
 
   mp.set_start_method('spawn')
-  model = CNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
+  model = DNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
