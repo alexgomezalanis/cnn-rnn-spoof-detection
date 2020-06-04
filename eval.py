@@ -26,7 +26,7 @@ def eval(args, model, optimizer, device, model_location):
     csv_dir = './protocols'
 
   if args.eval_mezcla:
-    dataset = 'mezcla'
+    dataset = 'grabados'
   else:
     dataset = 'test'
   
@@ -73,6 +73,7 @@ def test_epoch(model, device, data_loader, criterion):
       data = model(stfts)
       data = data.to(device)
       pSumadas,estimacionMMSE= MMSE(data,device)
+      print(pSumadas,estimacionMMSE)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(targets).sum().item()

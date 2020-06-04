@@ -75,6 +75,8 @@ class CNN_RNN_Dataset(Dataset): #creamos una clase que hereda de Dataset
       file_dir = 'ConjuntoAudiosReales'
     elif self.dataset == 'ingles':
       file_dir = 'ConjuntoDatosIngles'
+    elif self.dataset == 'grabados':
+      file_dir = 'ConjuntoDatosGrabados'
     else:
       file_dir = 'ConjuntoDatosTest'
 
