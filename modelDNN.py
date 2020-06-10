@@ -9,11 +9,11 @@ class DNN(nn.Module):
     self.device = device
     self.n_frames = n_frames
     self.n_shift = n_shift
-    self.fc1 = nn.Linear(256*128,4096)
-    self.fc2 = nn.Linear(4096,4096)
-    self.fc3 = nn.Linear(4096,4096)
-    self.fc4 = nn.Linear(4096,4096)
-    self.fc5 = nn.Linear(4096,num_classes)
+    self.fc1 = nn.Linear(256*128,1024)
+    self.fc2 = nn.Linear(1024,1024)
+    self.fc3 = nn.Linear(1024,1024)
+    self.fc4 = nn.Linear(1024,1024)
+    self.fc5 = nn.Linear(1024,num_classes)
 
   def forward(self, x):
     locuciones = x
