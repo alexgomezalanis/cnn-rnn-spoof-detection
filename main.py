@@ -76,7 +76,7 @@ def main():
   torch.manual_seed(args.seed)
 
   mp.set_start_method('spawn')
-  model = DNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
+  model = CNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
