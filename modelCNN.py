@@ -27,7 +27,7 @@ class CNN(nn.Module):
         y = F.max_pool2d(F.leaky_relu(self.conv2(y)), kernel_size=3, stride=3, padding=0)
         y = y.squeeze(0)
         y = y.flatten(start_dim=0)
-        y = self.fc1(F.leaky_relu(y))
+        #y = self.fc1(F.leaky_relu(y))
         y = self.fc2(y)
         salida_por_ventana.append(y)
       promedio = self.promedio(salida_por_ventana)  
