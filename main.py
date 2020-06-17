@@ -45,9 +45,9 @@ parser.add_argument('--window-length', type=float, default=0.025,
                     help='Window Length to compute STFT (s)')
 parser.add_argument('--frame-shift', type=float, default=0.010,
                     help='Frame Shift to compute STFT (s)')
-parser.add_argument('--train', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--train', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to train the model')
-parser.add_argument('--eval', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
+parser.add_argument('--eval', default=True, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='Whether to eval the model')
 parser.add_argument('--eval-separately', default=False, type=lambda x: (str(x).lower() in ['true', 'yes', '1']),
                     help='evalua todas las clases del conjunto de test por separado')
@@ -61,7 +61,7 @@ parser.add_argument('--load-epoch', type=int, default=-1,
                     help='Saved epoch to load and start training')
 parser.add_argument('--load-trainModel', type=str, default='3',
                     help='path to load train model')
-parser.add_argument('--csv-test', type=str, default='ConjuntoAudiosReales',
+parser.add_argument('--csv-test', type=str, default='ConjuntoDatosTest',
                     help='path to load train model (default: ConjuntoDatosTest)')
 
 
@@ -76,7 +76,7 @@ def main():
   torch.manual_seed(args.seed)
 
   mp.set_start_method('spawn')
-  model = CNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
+  model = DNN(args.num_classes,args.num_frames,args.n_shift,device).to(device)
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
