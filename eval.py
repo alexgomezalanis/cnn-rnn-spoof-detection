@@ -187,7 +187,7 @@ def MMSE(data,device):
 
     estimacionNoise = prob_locuciones[i][9] * 2.5 + prob_locuciones[i][10] * 7.5 + prob_locuciones[i][11] * 15 + (clipping + limpio + rever) * 25
     estimacionClipping = prob_locuciones[i][1] * 1 + prob_locuciones[i][2] * 2 + prob_locuciones[i][3] * 3 + prob_locuciones[i][4] * 4 + (noise + limpio + rever) * 0
-    estimacionRever = prob_locuciones[i][5] * 1 + prob_locuciones[i][6] * 2 + prob_locuciones[i][7] * 3 + prob_locuciones[i][8] * 4 + (noise + limpio + clipping) * 0
+    estimacionRever = prob_locuciones[i][5] * 0.23 + prob_locuciones[i][6] * 0.44 + prob_locuciones[i][7] * 0.78 + prob_locuciones[i][8] * 1.3 + (noise + limpio + clipping) * 0
  
     estimacion = [estimacionClipping,estimacionRever,estimacionNoise]
     estimaciones.append(estimacion)
