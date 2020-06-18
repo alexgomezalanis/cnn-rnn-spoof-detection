@@ -9,10 +9,10 @@ class CNN(nn.Module):
     self.device = device
     self.n_frames = n_frames
     self.n_shift = n_shift
-    self.conv1 = nn.Conv2d(1, 16, kernel_size=9, stride=1, padding=2)
-    self.conv2 = nn.Conv2d(16, 32, kernel_size=4, stride=1, padding=2)
+    self.conv1 = nn.Conv2d(1, 32, kernel_size=9, stride=1, padding=2)
+    self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=1, padding=2)
     #self.fc1 = nn.Linear(64*28*14,4*28*14)
-    self.fc2 = nn.Linear(32*28*14,num_classes)
+    self.fc2 = nn.Linear(64*28*14,num_classes)
   
   def forward(self, x):
     locuciones = x

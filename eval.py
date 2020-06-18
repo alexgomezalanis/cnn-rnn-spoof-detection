@@ -72,10 +72,10 @@ def test_epoch(model, device, data_loader, criterion):
       names = batch[2]
       data = model(stfts)
       data = data.to(device)
-      #pSumadas,estimacionMMSE= MMSE(data,device)
-      #print(pSumadas)
-      #print(estimacionMMSE)
-      #print(names)
+      pSumadas,estimacionMMSE= MMSE(data,device)
+      print(pSumadas)
+      print(estimacionMMSE)
+      print(names)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
       correct += pred.eq(targets).sum().item()
