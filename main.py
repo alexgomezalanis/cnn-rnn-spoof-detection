@@ -62,7 +62,7 @@ parser.add_argument('--load-epoch', type=int, default=-1,
 parser.add_argument('--load-trainModel', type=str, default='3',
                     help='path to load train model')
 parser.add_argument('--csv-test', type=str, default='audiosReales',
-                    help='path to load train model (default: ConjuntoDatosTest)')
+                    help='path to load train model (default: ConjuntoDatosIngles)')
 
 
 def main():
