@@ -28,7 +28,7 @@ def eval(args, model, optimizer, device, model_location):
   if args.eval_mezcla:
     dataset = 'grabados'
   else:
-    dataset = 'ingles'
+    dataset = 'mezcla'
   
   test_dataset = CNN_RNN_Dataset(
     csv_file=csv_dir + '/' + args.csv_test + '.csv',
@@ -72,9 +72,9 @@ def test_epoch(model, device, data_loader, criterion):
       names = batch[2]
       data = model(stfts)
       data = data.to(device)
-      #pSumadas,estimacionMMSE= MMSE(data,device)
-      #print(pSumadas)
-      #print(estimacionMMSE)
+      pSumadas,estimacionMMSE= MMSE(data,device)
+      print(pSumadas)
+      print(estimacionMMSE)
       #print(names)
       test_loss += criterion(data, targets).item() # sum up batch loss
       pred = data.max(1)[1] # get the index of the max probability
